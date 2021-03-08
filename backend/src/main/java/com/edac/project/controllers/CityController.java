@@ -1,7 +1,7 @@
 package com.edac.project.controllers;
 
 import com.edac.project.models.City;
-import com.edac.project.models.ResponseResult;
+import com.edac.project.models.common.ResponseResult;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,7 +1,7 @@
 package com.edac.project.controllers;
 
-import com.edac.project.models.ResponseResult;
-import com.edac.project.models.Theater;
+import com.edac.project.models.common.ResponseResult;
+import com.edac.project.models.theater.Theater;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;

@@ -1,6 +1,7 @@
 package com.edac.project.models;
 
-import javax.persistence.*;
+import com.edac.project.models.theater.Theater;
+
 import java.util.List;
 
 public class City {

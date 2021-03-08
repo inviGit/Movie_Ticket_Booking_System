@@ -1,4 +1,4 @@
-package com.edac.project.models;
+package com.edac.project.models.common;
 
 public class ResponseResult {
     private Integer status;

@@ -1,13 +1,6 @@
-package com.edac.project.models;
+package com.edac.project.models.theater;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import javax.persistence.Column;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.validation.constraints.NotBlank;
-import java.util.List;
+import com.edac.project.models.City;
 
 public class Theater {
 
