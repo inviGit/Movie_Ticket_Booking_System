@@ -5,9 +5,31 @@ import com.edac.project.models.common.ResponseResult;
 import com.edac.project.models.theater.Theater;
 import com.edac.project.models.movie.Movie;
 import com.edac.project.models.theater.Show;
+import com.edac.project.models.users.ApplicationUser;
+import com.edac.project.models.users.Customer;
+import com.edac.project.models.users.Vendor;
+
 import java.util.List;
 
 public interface CityService {
+
+    //Vendor Registration --Start
+    Vendor getVendorById(Integer vendorId);
+    List<Vendor> getAllVendors();
+    ResponseResult addVendor(Vendor vendor);
+    ResponseResult registerVendor(Integer vendorId, ApplicationUser applicationUser);
+    ResponseResult updateVendor(Integer vendorId, Vendor vendor);
+    ResponseResult removeVendorById(Integer vendorId);
+    //Vendor --End
+
+
+    //Customer --Start
+    Customer getCustomerById(Integer customerId);
+    List<Customer> getAllCustomers();
+    ResponseResult registerCustomer(ApplicationUser applicationUser, Customer customer);
+    ResponseResult updateCustomer(Integer customerId, Customer customer);
+    ResponseResult removeCustomerById(Integer customerId);
+    //Customer --End
 
 
     //City --Start
@@ -36,10 +58,11 @@ public interface CityService {
     ResponseResult removeMovieFromTheater(Integer movieId);
     //Movie --End
 
-    //Theater Movies Show
+
+    //Movie Show
     Show getShowById(Integer showId);
     ResponseResult addShowToTheater(Integer movieId, Show show);
     ResponseResult updateShowToTheater(Integer showId, Show show);
     ResponseResult removeShowFromTheater(Integer showId);
-    //Theater --End
+    //Movie --End
 }

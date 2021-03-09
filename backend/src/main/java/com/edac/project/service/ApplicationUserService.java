@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 public class ApplicationUserService implements UserDetailsService {
 
 	
-	private ApplicationUserDao applicationUserDao;
+	private final ApplicationUserDao applicationUserDao;
 	
 	@Autowired
 	public ApplicationUserService(@Qualifier("jpa") ApplicationUserDao applicationUserDao) {

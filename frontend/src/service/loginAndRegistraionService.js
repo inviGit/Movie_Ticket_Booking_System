@@ -20,8 +20,8 @@ class LoginAndRegistrationService {
   }
 
   registerVendor(vendorId, applicationUser) {
-    const url = "http://localhost:8080/api/v1/register/vendor";
-    const data = { "vendorId": vendorId, applicationUser };
+    const url = `http://localhost:8080/api/v1/register/vendor/${vendorId}`;
+    const data = applicationUser;
     const headers = {
       "Content-Type": "application/json",
     };

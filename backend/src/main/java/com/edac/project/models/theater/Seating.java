@@ -1,9 +1,25 @@
 package com.edac.project.models.theater;
 
-public class Seating {
+import com.edac.project.models.common.BaseEntity;
+import com.edac.project.models.users.Vendor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import java.util.Arrays;
+
+@Entity
+@Table(name = "seating")
+public class Seating extends BaseEntity {
+
+    @Column(name = "seats", length = 200)
     private short[][] seats = new short[12][12];
 
+    @JsonIgnore
+    @OneToOne(mappedBy = "seating",
+            orphanRemoval = true)
     private Show show;
 
     public Seating() {

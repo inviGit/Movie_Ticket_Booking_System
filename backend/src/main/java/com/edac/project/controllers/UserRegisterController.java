@@ -3,12 +3,14 @@ package com.edac.project.controllers;
 import com.edac.project.dao.ApplicationUserDao;
 import com.edac.project.models.common.ResponseResult;
 import com.edac.project.models.users.ApplicationUser;
+import com.edac.project.models.users.Customer;
 import com.edac.project.security.ApplicationUserRole;
 import com.edac.project.security.PasswordConfig;
 import com.edac.project.service.CityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/v1/register")
 public class UserRegisterController {
@@ -42,5 +44,15 @@ public class UserRegisterController {
         return "hi";
     }
 
+    @PutMapping("/customer")
+    public ResponseResult registerCustomer(@RequestBody ApplicationUser applicationUser){
+        Customer customer = new Customer();
+        return cityService.registerCustomer(applicationUser, customer);
+    }
 
+    @PutMapping("/vendor/{vendorId}")
+    public ResponseResult registerVendor(@PathVariable("vendorId") Integer vendorId,
+                                         @RequestBody ApplicationUser applicationUser){
+        return cityService.registerVendor(vendorId, applicationUser);
+    }
 }

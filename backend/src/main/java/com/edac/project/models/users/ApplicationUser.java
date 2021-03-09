@@ -1,6 +1,7 @@
 package com.edac.project.models.users;
 
-
+import com.edac.project.models.users.Customer;
+import com.edac.project.models.users.Vendor;
 import com.edac.project.security.ApplicationUserRole;
 import com.edac.project.security.PasswordConfig;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -42,7 +43,14 @@ public class ApplicationUser implements UserDetails {
 	@Column(name = "is_enabled")
 	private  boolean isEnabled = true;
 
+	@JsonIgnore
+	@OneToOne(mappedBy = "applicationUser", orphanRemoval = true)
+	private Customer customer;
 
+	@JsonIgnore
+	@OneToOne(mappedBy = "applicationUser",
+			orphanRemoval = true)
+	private Vendor vendor;
 
 	public ApplicationUser() {
 	}

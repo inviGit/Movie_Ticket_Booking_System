@@ -2,17 +2,25 @@ package com.edac.project.models;
 
 import com.edac.project.models.theater.Theater;
 
+import javax.persistence.*;
 import java.util.List;
 
+@Entity
+@Table(name = "city")
 public class City {
 
-
+    @Id
+    @Column(name = "city_pincode", nullable = false, unique = true)
     private Integer pincode;
 
+    @Column(name = "city_name", length = 20, nullable = false)
     private String cityName;
 
+    @Column(name = "state_name", length = 20, nullable = false)
     private String stateName;
 
+    @OneToMany(mappedBy="city",
+            orphanRemoval = true)
     private List<Theater> theaters;
 
     public City() {
