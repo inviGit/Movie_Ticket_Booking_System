@@ -1,6 +1,7 @@
 package com.edac.project.models.common;
 
 public class ResponseResult {
+
     private Integer status;
     private String message;
     private Object object;
@@ -34,5 +35,4 @@ public class ResponseResult {
     public void setObject(Object object) {
         this.object = object;
     }
-
 }

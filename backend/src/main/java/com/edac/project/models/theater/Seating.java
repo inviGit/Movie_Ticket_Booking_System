@@ -1,6 +1,5 @@
 package com.edac.project.models.theater;
 
-
 public class Seating {
 
     private short[][] seats = new short[12][12];

@@ -6,6 +6,7 @@ import java.util.List;
 
 public class City {
 
+
     private Integer pincode;
 
     private String cityName;

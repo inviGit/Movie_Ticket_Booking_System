@@ -1,7 +1,9 @@
 package com.edac.project.models.movie;
 
-
+import com.edac.project.models.theater.Show;
 import com.edac.project.models.theater.Theater;
+
+import java.util.List;
 
 public class Movie {
 
@@ -21,10 +23,18 @@ public class Movie {
 
     private Theater theater;
 
+    public List<Show> shows;
+
     public Movie() {
     }
 
-    public Movie(String movieName, String actor, String actress, LanguageList language, String director, GenreList genre, boolean activeStatus) {
+    public Movie(String movieName,
+                 String actor,
+                 String actress,
+                 LanguageList language,
+                 String director,
+                 GenreList genre,
+                 boolean activeStatus) {
         this.movieName = movieName;
         this.actor = actor;
         this.actress = actress;
@@ -90,6 +100,14 @@ public class Movie {
         this.activeStatus = activeStatus;
     }
 
+    public List<Show> getShows() {
+        return shows;
+    }
+
+    public void setShows(List<Show> shows) {
+        this.shows = shows;
+    }
+
     public Theater getTheater() {
         return theater;
     }
@@ -98,6 +116,13 @@ public class Movie {
         this.theater = theater;
     }
 
+    public void addShow(Show show) {
+        shows.add(show);
+        show.setMovie(this);
+    }
 
-
+    public void removeShow(Show show) {
+        shows.remove(show);
+        show.setMovie(null);
+    }
 }
