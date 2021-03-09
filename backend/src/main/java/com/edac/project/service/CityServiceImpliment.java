@@ -4,7 +4,6 @@ import com.edac.project.models.*;
 import com.edac.project.models.common.ResponseResult;
 import com.edac.project.models.movie.GenreList;
 import com.edac.project.models.movie.LanguageList;
-import com.edac.project.models.theater.Seating;
 import com.edac.project.models.theater.Theater;
 import com.edac.project.models.movie.Movie;
 import com.edac.project.models.theater.Show;
