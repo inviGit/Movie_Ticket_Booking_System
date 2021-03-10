@@ -1,4 +1,5 @@
-import axios from "axios";
+import axios from "axios"
+import interceptors from "../Interceptors";
 
 class CustomerService {
   getCustomer(customerId) {

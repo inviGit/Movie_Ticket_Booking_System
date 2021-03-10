@@ -1,15 +1,16 @@
 import axios from "axios";
+import interceptors from "../Interceptors";
 
 class CityService {
-      getCity(cityId) {
+  getCity(cityId) {
     const url = `http://localhost:8080/api/v1/city/${cityId}`;
     return axios.get(url);
   }
 
   getAllCities() {
-      const url = `http://localhost:8080/api/v1/city/all`;
-      return axios.get(url);
-    }
+    const url = `http://localhost:8080/api/v1/city/all`;
+    return axios.get(url);
+  }
 
   addCity(city) {
     const url = `http://localhost:8080/api/v1/city/add`;
