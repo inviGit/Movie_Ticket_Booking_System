@@ -1,4 +1,5 @@
 import axios from "axios";
+import interceptors from "../Interceptors";
 
 class LoginAndRegistrationService {
   login(user) {
