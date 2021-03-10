@@ -20,8 +20,6 @@ class TheaterService {
     return axios.post(url, data, headers);
   }
 
-
-
   updateTheater(theaterId, theater) {
     const url = `http://localhost:8080/api/v1/theater/update/${theaterId}`;
     const data = theater;

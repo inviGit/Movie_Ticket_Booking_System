@@ -1,19 +1,18 @@
 import React, { Component } from "react";
 import loginAndRegistrationService from "../service/loginAndRegistraionService";
+import CityService from "../service/cityService";
 
 export class login extends Component {
   state = {
     username: "",
     password: "",
   };
-
+  
   changeUserNameHandler = (event) => {
-    console.log(event.target.value);
-    this.setState({ username: event.target.value });
+      this.setState({ username: event.target.value });
   };
   changePasswordHandler = (event) => {
-    console.log(event.target.value);
-    this.setState({ password: event.target.value });
+      this.setState({ password: event.target.value });
   };
   loginUser = () => {
     let user = {
@@ -24,6 +23,7 @@ export class login extends Component {
       localStorage.setItem("authorization", res.headers.authorization);
     });
   };
+
 
   render() {
     const { username, password } = this.state;
