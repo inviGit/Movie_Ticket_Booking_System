@@ -12,6 +12,9 @@ class CityDetails extends Component {
              
         }
 
+        this.editCityDetails = this.editCityDetails.bind(this);
+        this.theaterDetails = this.theaterDetails.bind(this);
+
     }
 
     
@@ -27,8 +30,10 @@ class CityDetails extends Component {
         
     }
 
-    movieDetails(id) {
-        
+    theaterDetails(id) {
+
+        this.props.history.push(`/theater/${id}`);
+   
     }
 
     editCityDetails(id) {
@@ -72,7 +77,6 @@ class CityDetails extends Component {
                         <tr>
                             <th>Theater Name</th>
                             <th>Theater Address</th>
-                            <th>Vendor ID</th>
                             <th>Action</th>
 
                         </tr>
@@ -84,12 +88,11 @@ class CityDetails extends Component {
 
                                 theaters => 
                                 <tr key = {theaters.id}>
-                                    <td>{theaters.theater_name}</td>
-                                    <td>{theaters.theater_address}</td>
-                                    <td>{theaters.vendor_id}</td>
+                                    <td>{theaters.theaterName}</td>
+                                    <td>{theaters.theaterAddress}</td>
                                     <td>
                                     <button className="btn btn-info"
-                                    onClick={ () => this.movieDetails(theaters.id)}>Show</button>
+                                    onClick={ () => this.theaterDetails(theaters.id)}>Show</button>
                                     </td>
                                 </tr>
                             )
