@@ -30,6 +30,12 @@ class CityDetails extends Component {
     movieDetails(id) {
         
     }
+
+    editCityDetails(id) {
+
+        this.props.history.push(`/editcity/${id}`);
+
+    }
     
     
     render() {
@@ -50,6 +56,9 @@ class CityDetails extends Component {
                            <label>stateName :</label>
                            <div style={{ textIndent: "10px"}}>{this.state.city.stateName}</div>
                        </div>
+                       <button className="btn btn-success"
+                                    onClick={ () => this.editCityDetails(this.state.city_id)}>Edit</button>
+
 
                 </div>
                 </div>
