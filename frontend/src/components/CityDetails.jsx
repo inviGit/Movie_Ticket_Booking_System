@@ -7,18 +7,29 @@ class CityDetails extends Component {
     
         this.state = {
              city_id : this.props.match.params.id,
-             city:{}
+             city:{},
+             theaters:[]
+             
         }
+
     }
 
-    // componentDidMount() {
-    //     console.log("mount")
-    //     console.log(" get" , localStorage.getItem("authorization"));
-    //     CityService.getCity(this.state.city_id).then((res)=>{
-    //         console.log(res)
-    //     });
+    
+
+    componentDidMount() {
+            CityService.getCity(this.state.city_id).then((res)=>{
+            this.setState({
+                city: res.data,
+                theaters: res.data.theaters
+            })
+            
+        });
         
-    // }
+    }
+
+    movieDetails(id) {
+        
+    }
     
     
     render() {
@@ -45,10 +56,45 @@ class CityDetails extends Component {
 
                 <br></br>
 
+                <div>
+                <div className ="row">
+                <table className="table CityDetails table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Theater Name</th>
+                            <th>Theater Address</th>
+                            <th>Vendor ID</th>
+                            <th>Action</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {
+                            
+                            this.state.theaters.map(
+
+                                theaters => 
+                                <tr key = {theaters.id}>
+                                    <td>{theaters.theater_name}</td>
+                                    <td>{theaters.theater_address}</td>
+                                    <td>{theaters.vendor_id}</td>
+                                    <td>
+                                    <button className="btn btn-info"
+                                    onClick={ () => this.movieDetails(theaters.id)}>Show</button>
+                                    </td>
+                                </tr>
+                            )
+                        }
+                    </tbody>
+                </table>
+                    
+                </div>
+
                 
 
 
 
+            </div>
             </div>
         )
     }
