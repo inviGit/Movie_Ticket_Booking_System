@@ -7,6 +7,7 @@ import HeaderComponent from "./components/HeaderComponent";
 import EditCityDetails from "./components/EditCityDetails";
 import TheaterDetails from "./components/TheaterDetails";
 import MovieDetails from "./components/MovieDetails";
+import SeatDetails from "./components/SeatDetails";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path = "/editcity/:id" component = {EditCityDetails}></Route>
           <Route path = "/theater/:id" component = {TheaterDetails}></Route>
           <Route path = "/movie/:id" component = {MovieDetails}></Route>
+          <Route path = "/seat" component = {SeatDetails}></Route>
         </Switch>
       </Router>
     </div>

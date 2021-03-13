@@ -28,6 +28,8 @@ class MovieDetails extends Component {
 
     showTimings(id) {
 
+        this.props.history.push("/seat");
+
     }
     
     render() {
