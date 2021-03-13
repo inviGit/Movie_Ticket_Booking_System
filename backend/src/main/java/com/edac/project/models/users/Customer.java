@@ -1,6 +1,7 @@
 package com.edac.project.models.users;
 
 import com.edac.project.models.common.BaseEntity;
+import com.edac.project.models.theater.Ticket;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
@@ -24,13 +25,16 @@ public class Customer extends BaseEntity {
     @JoinColumn(name = "username", referencedColumnName = "username", unique = true)
     private ApplicationUser applicationUser;
 
+    @OneToOne(mappedBy = "customer",
+            orphanRemoval = true)
+    private Ticket ticket;
 
     public Customer() {
     }
 
-    public Customer(@NotBlank(message = "CustomerName is required") String name,
-                    @NotBlank(message = "CustomerEmail is required") String email,
-                    @NotBlank(message = "phoneNo is required") Integer phoneNo) {
+    public Customer(String name,
+                    String email,
+                    Integer phoneNo) {
         this.name = name;
         this.email = email;
         this.phoneNo = phoneNo;
@@ -66,5 +70,13 @@ public class Customer extends BaseEntity {
 
     public void setApplicationUser(ApplicationUser applicationUser) {
         this.applicationUser = applicationUser;
+    }
+
+    public Ticket getTicket() {
+        return ticket;
+    }
+
+    public void setTicket(Ticket ticket) {
+        this.ticket = ticket;
     }
 }
