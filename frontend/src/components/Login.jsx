@@ -7,6 +7,7 @@ export class login extends Component {
   state = {
     username: "",
     password: "",
+    status: "",
   };
   
   changeUserNameHandler = (event) => {
@@ -21,11 +22,13 @@ export class login extends Component {
       password: this.state.password,
     };
     loginAndRegistrationService.login(user).then((res) => {
-      localStorage.setItem("authorization", res.headers.authorization);
+      console.log(res)
+      localStorage.setItem("authorization", res.headers.authorization)
+
+      this.props.history.push("/admin")
+      
     });
-    CityService.getAllCities().then((res)=>{
-      console.log(res.data);
-    })
+    
   };
 
 
@@ -57,7 +60,7 @@ export class login extends Component {
                   onChange={this.changePasswordHandler}
                 />
               </div>
-
+              <h1>{this.state.status}</h1>
               <button
                 className="btn btn-success"
                 onClick={() => {
