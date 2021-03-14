@@ -34,7 +34,7 @@ public class CityServiceImpliment implements CityService{
     private final CustomerDao customerDao;
     private final SeatingDao seatingDao;
     private final TicketDao ticketDao;
-    private ResponseResult responseResult = new ResponseResult(0, "User Error", null);
+    private ResponseResult responseResult;
 
 
     @Autowired
@@ -77,6 +77,7 @@ public class CityServiceImpliment implements CityService{
 
     @Override
     public ResponseResult addVendor(Vendor vendor) {
+        responseResult = new ResponseResult(0, "User Error", null);
         try {
             vendor = vendorDao.save(vendor);
             responseResult.setStatus(1);
@@ -91,6 +92,7 @@ public class CityServiceImpliment implements CityService{
 
     @Override
     public ResponseResult registerVendor(Integer vendorId, ApplicationUser applicationUser) {
+        responseResult = new ResponseResult(0, "User Error", null);
         Vendor vendor = getVendorById(vendorId);
         Optional<ApplicationUser> byId = applicationUserDao.findById(applicationUser.getUsername());
         if(byId.isPresent()){
@@ -118,6 +120,7 @@ public class CityServiceImpliment implements CityService{
 
     @Override
     public ResponseResult updateVendor(Integer vendorId, Vendor vendorToUpdate) {
+        responseResult = new ResponseResult(0, "User Error", null);
         Vendor vendor = getVendorById(vendorId);
         if(vendor==null){
             responseResult.setMessage("vendor doesn't exist");
@@ -140,6 +143,7 @@ public class CityServiceImpliment implements CityService{
 
     @Override
     public ResponseResult removeVendorById(Integer vendorId) {
+        responseResult = new ResponseResult(0, "User Error", null);
         try {
             vendorDao.deleteById(vendorId);
             responseResult.setStatus(1);
@@ -171,8 +175,8 @@ public class CityServiceImpliment implements CityService{
     }
 
     @Override
-    public ResponseResult registerCustomer(ApplicationUser applicationUser,
-                                           Customer customer) {
+    public ResponseResult registerCustomer(ApplicationUser applicationUser, Customer customer) {
+        responseResult = new ResponseResult(0, "User Error", null);
         if(!applicationUserDao.existsById(applicationUser.getUsername())){
             applicationUser.setRole(ApplicationUserRole.CUSTOMER);
             PasswordConfig passwordConfig = new PasswordConfig();
@@ -198,6 +202,7 @@ public class CityServiceImpliment implements CityService{
 
     @Override
     public ResponseResult updateCustomer(Integer customerId, Customer customerToUpdate) {
+        responseResult = new ResponseResult(0, "User Error", null);
         Customer customer = getCustomerById(customerId);
         if(customer==null){
             responseResult.setMessage("Customer Not Registered");
@@ -219,6 +224,7 @@ public class CityServiceImpliment implements CityService{
 
     @Override
     public ResponseResult removeCustomerById(Integer customerId) {
+        responseResult = new ResponseResult(0, "User Error", null);
         if(customerDao.existsById(customerId)){
             try {
                 customerDao.deleteById(customerId);
@@ -254,6 +260,7 @@ public class CityServiceImpliment implements CityService{
 
     @Override
     public ResponseResult addCity(City city) {
+        responseResult = new ResponseResult(0, "User Error", null);
         try {
             city = cityDao.save(city);
             responseResult.setStatus(1);
@@ -268,6 +275,7 @@ public class CityServiceImpliment implements CityService{
 
     @Override
     public ResponseResult updateCity(Integer cityId, City cityToUpdate) {
+        responseResult = new ResponseResult(0, "User Error", null);
         City city = getCityById(cityId);
         if(city==null){
             responseResult.setMessage("City doesn't exist");
@@ -289,6 +297,7 @@ public class CityServiceImpliment implements CityService{
 
     @Override
     public ResponseResult removeCityById(Integer cityId) {
+        responseResult = new ResponseResult(0, "User Error", null);
         if(cityDao.existsById(cityId)){
             try {
                 cityDao.deleteById(cityId);
@@ -324,6 +333,7 @@ public class CityServiceImpliment implements CityService{
 
     @Override
     public ResponseResult addTheater(Integer cityId, Integer vendorId, Theater theater) {
+        responseResult = new ResponseResult(0, "User Error", null);
         City city = getCityById(cityId);
         Vendor vendor = getVendorById(vendorId);
         if(city==null){
@@ -352,6 +362,7 @@ public class CityServiceImpliment implements CityService{
 
     @Override
     public ResponseResult updateTheater(Integer theaterId, Theater theaterToUpdate) {
+        responseResult = new ResponseResult(0, "User Error", null);
         Theater theater = getTheaterById(theaterId);
         if(theater==null){
             responseResult.setMessage("Theater doesn't exist");
@@ -375,6 +386,7 @@ public class CityServiceImpliment implements CityService{
 
     @Override
     public ResponseResult removeTheaterById(Integer theaterId) {
+        responseResult = new ResponseResult(0, "User Error", null);
         try {
             theaterDao.deleteById(theaterId);
             responseResult.setStatus(1);
@@ -407,6 +419,7 @@ public class CityServiceImpliment implements CityService{
 
     @Override
     public ResponseResult addMovieToTheater(Integer theaterId, Movie movie) {
+        responseResult = new ResponseResult(0, "User Error", null);
         Theater theater = getTheaterById(theaterId);
         if(theater==null){
             responseResult.setMessage("theater Doesn't exist");
@@ -433,6 +446,7 @@ public class CityServiceImpliment implements CityService{
 
     @Override
     public ResponseResult updateMovie(Integer movieId, Movie movieToUpdate) {
+        responseResult = new ResponseResult(0, "User Error", null);
         Movie movie = getMovieById(movieId);
         if(movie == null){
             responseResult.setMessage("Movie doesn't exist");
@@ -454,6 +468,7 @@ public class CityServiceImpliment implements CityService{
 
     @Override
     public ResponseResult removeMovieFromTheater(Integer movieId) {
+        responseResult = new ResponseResult(0, "User Error", null);
         try {
             movieDao.deleteById(movieId);
             responseResult.setMessage("Movie removed from theater successfully");
@@ -482,6 +497,7 @@ public class CityServiceImpliment implements CityService{
 
     @Override
     public ResponseResult addShowToTheater(Integer movieId, Show show) {
+        responseResult = new ResponseResult(0, "User Error", null);
         Movie movie = getMovieById(movieId);
         if(movie==null){
             responseResult.setMessage("movie Doesn't exist");
@@ -508,6 +524,7 @@ public class CityServiceImpliment implements CityService{
 
     @Override
     public ResponseResult updateShowToTheater(Integer showId, Show showToUpdate) {
+        responseResult = new ResponseResult(0, "User Error", null);
         Show show = getShowById(showId);
         if(show == null){
             responseResult.setMessage("Show doesn't exist");
@@ -527,7 +544,8 @@ public class CityServiceImpliment implements CityService{
     }
 
     @Override
-    public ResponseResult removeShowFromTheater(Integer showId) {// remove show from movie
+    public ResponseResult removeShowFromTheater(Integer showId) {
+        responseResult = new ResponseResult(0, "User Error", null);
         try {
             showDao.deleteById(showId);
             responseResult.setMessage("Removed Show Successfully");
@@ -555,6 +573,7 @@ public class CityServiceImpliment implements CityService{
 
     @Override
     public ResponseResult bookSeats(Integer seatingId, Integer customerId, List<String> seats) {
+        responseResult = new ResponseResult(0, "User Error", null);
         Seating seating = getSeatingById(seatingId);
         Customer customer = getCustomerById(customerId);
         if (seating == null) {
@@ -598,6 +617,7 @@ public class CityServiceImpliment implements CityService{
 
     @Override
     public ResponseResult cancelBooking(Integer showId, Integer customerId) {
+        responseResult = new ResponseResult(0, "User Error", null);
         Show show = getShowById(showId);
         Customer customer = getCustomerById(customerId);
         if(show==null){
