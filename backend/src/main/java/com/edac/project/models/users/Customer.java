@@ -1,11 +1,13 @@
 package com.edac.project.models.users;
 
 import com.edac.project.models.common.BaseEntity;
+import com.edac.project.models.theater.Theater;
 import com.edac.project.models.theater.Ticket;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 @Entity
 @Table(name = "customer")
@@ -25,9 +27,9 @@ public class Customer extends BaseEntity {
     @JoinColumn(name = "username", referencedColumnName = "username", unique = true)
     private ApplicationUser applicationUser;
 
-    @OneToOne(mappedBy = "customer",
+    @OneToMany(mappedBy="customer",
             orphanRemoval = true)
-    private Ticket ticket;
+    private List<Ticket> tickets;
 
     public Customer() {
     }
@@ -72,11 +74,21 @@ public class Customer extends BaseEntity {
         this.applicationUser = applicationUser;
     }
 
-    public Ticket getTicket() {
-        return ticket;
+    public List<Ticket> getTickets() {
+        return tickets;
     }
 
-    public void setTicket(Ticket ticket) {
-        this.ticket = ticket;
+    public void setTickets(List<Ticket> tickets) {
+        this.tickets = tickets;
+    }
+
+    public void addTicket(Ticket ticket) {
+        tickets.add(ticket);
+        ticket.setCustomer(this);
+    }
+
+    public void removeTicket(Ticket ticket) {
+        tickets.remove(ticket);
+        ticket.setCustomer(null);
     }
 }

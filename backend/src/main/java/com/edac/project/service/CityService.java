@@ -2,12 +2,17 @@ package com.edac.project.service;
 
 import com.edac.project.models.*;
 import com.edac.project.models.common.ResponseResult;
+import com.edac.project.models.theater.Seating;
 import com.edac.project.models.theater.Theater;
 import com.edac.project.models.movie.Movie;
 import com.edac.project.models.theater.Show;
+import com.edac.project.models.theater.Ticket;
 import com.edac.project.models.users.ApplicationUser;
 import com.edac.project.models.users.Customer;
 import com.edac.project.models.users.Vendor;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -65,4 +70,12 @@ public interface CityService {
     ResponseResult updateShowToTheater(Integer showId, Show show);
     ResponseResult removeShowFromTheater(Integer showId);
     //Movie --End
+
+    //Seating --Start
+    Seating getSeatingById(Integer seatingId);
+    ResponseResult bookSeats(Integer seatingId, Integer customerId, List<String> seats);
+    ResponseResult cancelBooking(Integer showId, Integer customerId);
+
+    //TICKET
+    Ticket getTicketById(Integer ticketId);
 }

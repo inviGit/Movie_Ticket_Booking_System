@@ -7,31 +7,35 @@ import com.edac.project.models.users.Vendor;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "ticket")
 public class Ticket extends BaseEntity {
 
     @Column(name = "seat_number", length = 10, nullable = false)
-    private int seatNo;
+    private String seatNo;
 
     @ManyToOne(fetch= FetchType.LAZY)
     private Show show;
 
     @JsonIgnore
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "customerId", referencedColumnName = "id", unique = true)
+    @ManyToOne(fetch= FetchType.LAZY)
     private Customer customer;
 
 
     public Ticket() {
     }
 
-    public int getSeatNo() {
+    public Ticket(String seatNo) {
+        this.seatNo = seatNo;
+    }
+
+    public String getSeatNo() {
         return seatNo;
     }
 
-    public void setSeatNo(int seatNo) {
+    public void setSeatNo(String seatNo) {
         this.seatNo = seatNo;
     }
 

@@ -3,10 +3,12 @@ package com.edac.project.service;
 import com.edac.project.dao.*;
 import com.edac.project.models.*;
 import com.edac.project.models.common.ResponseResult;
+import com.edac.project.models.common.SeatMapping;
 import com.edac.project.models.theater.Seating;
 import com.edac.project.models.theater.Theater;
 import com.edac.project.models.movie.Movie;
 import com.edac.project.models.theater.Show;
+import com.edac.project.models.theater.Ticket;
 import com.edac.project.models.users.ApplicationUser;
 import com.edac.project.models.users.Customer;
 import com.edac.project.models.users.Vendor;
@@ -15,7 +17,9 @@ import com.edac.project.security.PasswordConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -29,7 +33,9 @@ public class CityServiceImpliment implements CityService{
     private final ApplicationUserDao applicationUserDao;
     private final CustomerDao customerDao;
     private final SeatingDao seatingDao;
-    private static final ResponseResult RESPONSE = new ResponseResult(0, "User Error", null);
+    private final TicketDao ticketDao;
+    private ResponseResult responseResult = new ResponseResult(0, "User Error", null);
+
 
     @Autowired
     public CityServiceImpliment(CityDao cityDao,
@@ -38,7 +44,9 @@ public class CityServiceImpliment implements CityService{
                                 ShowDao showDao,
                                 VendorDao vendorDao,
                                 ApplicationUserDao applicationUserDao,
-                                CustomerDao customerDao, SeatingDao seatingDao) {
+                                CustomerDao customerDao,
+                                SeatingDao seatingDao,
+                                TicketDao ticketDao) {
         this.cityDao = cityDao;
         this.theaterDao = theaterDao;
         this.movieDao = movieDao;
@@ -47,6 +55,7 @@ public class CityServiceImpliment implements CityService{
         this.applicationUserDao = applicationUserDao;
         this.customerDao = customerDao;
         this.seatingDao = seatingDao;
+        this.ticketDao = ticketDao;
     }
 
     //Vendor --Start
@@ -70,14 +79,14 @@ public class CityServiceImpliment implements CityService{
     public ResponseResult addVendor(Vendor vendor) {
         try {
             vendor = vendorDao.save(vendor);
-            RESPONSE.setStatus(1);
-            RESPONSE.setMessage("Vendor Added Successfully");
-            RESPONSE.setObject(vendor);
+            responseResult.setStatus(1);
+            responseResult.setMessage("Vendor Added Successfully");
+            responseResult.setObject(vendor);
         } catch (Exception e) {
-            RESPONSE.setMessage("Duplicate entry "+ vendor.getVendorEmail() +" for vendor");
+            responseResult.setMessage("Duplicate entry "+ vendor.getVendorEmail() +" for vendor");
             e.printStackTrace();
         }
-        return RESPONSE;
+        return responseResult;
     }
 
     @Override
@@ -85,9 +94,9 @@ public class CityServiceImpliment implements CityService{
         Vendor vendor = getVendorById(vendorId);
         Optional<ApplicationUser> byId = applicationUserDao.findById(applicationUser.getUsername());
         if(byId.isPresent()){
-            RESPONSE.setMessage("Already registered");
+            responseResult.setMessage("Already registered");
         }else if(vendor == null ){
-            RESPONSE.setMessage("Vendor doesn't exist");
+            responseResult.setMessage("Vendor doesn't exist");
         }else{
             applicationUser.setRole(ApplicationUserRole.VENDOR);
             PasswordConfig passwordConfig = new PasswordConfig();
@@ -96,50 +105,50 @@ public class CityServiceImpliment implements CityService{
                 applicationUserDao.save(applicationUser);
                 vendor.setApplicationUser(applicationUser);
                 vendorDao.save(vendor);
-                RESPONSE.setStatus(1);
-                RESPONSE.setMessage("Vendor Registered Successfully");
-                RESPONSE.setObject("username: "+ applicationUser.getUsername());
+                responseResult.setStatus(1);
+                responseResult.setMessage("Vendor Registered Successfully");
+                responseResult.setObject("username: "+ applicationUser.getUsername());
             } catch (Exception e) {
-                RESPONSE.setMessage("Duplicate entry " + applicationUser.getUsername() + " for user");
+                responseResult.setMessage("Duplicate entry " + applicationUser.getUsername() + " for user");
                 e.printStackTrace();
             }
         }
-        return RESPONSE;
+        return responseResult;
     }
 
     @Override
     public ResponseResult updateVendor(Integer vendorId, Vendor vendorToUpdate) {
         Vendor vendor = getVendorById(vendorId);
         if(vendor==null){
-            RESPONSE.setMessage("vendor doesn't exist");
+            responseResult.setMessage("vendor doesn't exist");
         }else{
             try {
                 vendorToUpdate.setId(vendor.getId());
                 vendorToUpdate.setTheaters(vendor.getTheaters());
                 vendorToUpdate.setApplicationUser(vendor.getApplicationUser());
                 vendorDao.save(vendorToUpdate);
-                RESPONSE.setStatus(1);
-                RESPONSE.setMessage("Vendor updated successfully");
+                responseResult.setStatus(1);
+                responseResult.setMessage("Vendor updated successfully");
             } catch (Exception e) {
-                RESPONSE.setMessage("Duplicate entry "+ vendor.getVendorEmail() +" for vendor");
+                responseResult.setMessage("Duplicate entry "+ vendor.getVendorEmail() +" for vendor");
                 e.printStackTrace();
             }
         }
-        RESPONSE.setObject(vendorToUpdate);
-        return RESPONSE;
+        responseResult.setObject(vendorToUpdate);
+        return responseResult;
     }
 
     @Override
     public ResponseResult removeVendorById(Integer vendorId) {
         try {
             vendorDao.deleteById(vendorId);
-            RESPONSE.setStatus(1);
-            RESPONSE.setMessage("Vendor removed successfully");
+            responseResult.setStatus(1);
+            responseResult.setMessage("Vendor removed successfully");
         } catch (Exception e) {
-            RESPONSE.setMessage("Vendor doesn't exist");
+            responseResult.setMessage("Vendor doesn't exist");
             e.printStackTrace();
         }
-        return RESPONSE;
+        return responseResult;
     }
     //Vendor --End
 
@@ -174,38 +183,38 @@ public class CityServiceImpliment implements CityService{
             try {
                 applicationUserDao.save(applicationUser);
                 customerDao.save(customer);
-                RESPONSE.setStatus(1);
-                RESPONSE.setMessage("Customer Registered Successfully");
-                RESPONSE.setObject(applicationUser.getUsername());
+                responseResult.setStatus(1);
+                responseResult.setMessage("Customer Registered Successfully");
+                responseResult.setObject(applicationUser.getUsername());
             } catch (Exception e) {
                 e.printStackTrace();
-                RESPONSE.setMessage("ERROR: "+e.getMessage());
+                responseResult.setMessage("ERROR: "+e.getMessage());
             }
         }else{
-            RESPONSE.setMessage("Duplicate UserName");
+            responseResult.setMessage("Duplicate UserName");
         }
-        return RESPONSE;
+        return responseResult;
     }
 
     @Override
     public ResponseResult updateCustomer(Integer customerId, Customer customerToUpdate) {
         Customer customer = getCustomerById(customerId);
         if(customer==null){
-            RESPONSE.setMessage("Customer Not Registered");
+            responseResult.setMessage("Customer Not Registered");
         }else{
             try {
                 customerToUpdate.setId(customer.getId());
                 customerToUpdate.setApplicationUser(customer.getApplicationUser());
                 customerDao.save(customerToUpdate);
-                RESPONSE.setStatus(1);
-                RESPONSE.setMessage("Customer details updated successfully");
+                responseResult.setStatus(1);
+                responseResult.setMessage("Customer details updated successfully");
             } catch (Exception e) {
-                RESPONSE.setMessage("Duplicate entry "+ customer.getEmail() +" for customer");
+                responseResult.setMessage("Duplicate entry "+ customer.getEmail() +" for customer");
                 e.printStackTrace();
             }
         }
-        RESPONSE.setObject(customerToUpdate);
-        return RESPONSE;
+        responseResult.setObject(customerToUpdate);
+        return responseResult;
     }
 
     @Override
@@ -213,15 +222,15 @@ public class CityServiceImpliment implements CityService{
         if(customerDao.existsById(customerId)){
             try {
                 customerDao.deleteById(customerId);
-                RESPONSE.setStatus(1);
-                RESPONSE.setMessage("Removed Customer "+customerId+" Successfully");
+                responseResult.setStatus(1);
+                responseResult.setMessage("Removed Customer "+customerId+" Successfully");
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }else{
-            RESPONSE.setMessage("Customer doesn't exist");
+            responseResult.setMessage("Customer doesn't exist");
         }
-        return RESPONSE;
+        return responseResult;
     }
     //Customer --End
 
@@ -247,35 +256,35 @@ public class CityServiceImpliment implements CityService{
     public ResponseResult addCity(City city) {
         try {
             city = cityDao.save(city);
-            RESPONSE.setStatus(1);
-            RESPONSE.setMessage("City added Successfully");
+            responseResult.setStatus(1);
+            responseResult.setMessage("City added Successfully");
         } catch (Exception e) {
-            RESPONSE.setMessage("Duplicate pincode entry "+ city.getPincode() +" for city");
+            responseResult.setMessage("Duplicate pincode entry "+ city.getPincode() +" for city");
             e.printStackTrace();
         }
-        RESPONSE.setObject(city);
-        return RESPONSE;
+        responseResult.setObject(city);
+        return responseResult;
     }
 
     @Override
     public ResponseResult updateCity(Integer cityId, City cityToUpdate) {
         City city = getCityById(cityId);
         if(city==null){
-            RESPONSE.setMessage("City doesn't exist");
+            responseResult.setMessage("City doesn't exist");
         }else{
             try {
                 cityToUpdate.setPincode(city.getPincode());
                 cityToUpdate.setTheaters(city.getTheaters());
                 cityDao.save(cityToUpdate);
-                RESPONSE.setStatus(1);
-                RESPONSE.setMessage("Updated City Successfully");
+                responseResult.setStatus(1);
+                responseResult.setMessage("Updated City Successfully");
             } catch (Exception e) {
-                RESPONSE.setMessage("Duplicate pincode entry "+ city.getPincode() +" for city");
+                responseResult.setMessage("Duplicate pincode entry "+ city.getPincode() +" for city");
                 e.printStackTrace();
             }
         }
-        RESPONSE.setObject(cityToUpdate);
-        return RESPONSE;
+        responseResult.setObject(cityToUpdate);
+        return responseResult;
     }
 
     @Override
@@ -283,15 +292,15 @@ public class CityServiceImpliment implements CityService{
         if(cityDao.existsById(cityId)){
             try {
                 cityDao.deleteById(cityId);
-                RESPONSE.setStatus(1);
-                RESPONSE.setMessage("Removed City "+cityId+" Successfully");
+                responseResult.setStatus(1);
+                responseResult.setMessage("Removed City "+cityId+" Successfully");
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }else{
-            RESPONSE.setMessage("City doesn't exist");
+            responseResult.setMessage("City doesn't exist");
         }
-        return RESPONSE;
+        return responseResult;
     }
     //City --End
 
@@ -318,12 +327,12 @@ public class CityServiceImpliment implements CityService{
         City city = getCityById(cityId);
         Vendor vendor = getVendorById(vendorId);
         if(city==null){
-            RESPONSE.setMessage("City Doesn't exist");
+            responseResult.setMessage("City Doesn't exist");
         }else if(vendor==null){
-            RESPONSE.setMessage("Vendor Doesn't exist");
+            responseResult.setMessage("Vendor Doesn't exist");
         }else if(city.getTheaters().stream().filter(t -> t.getTheaterName().equals(theater.getTheaterName())&&
                 t.getTheaterAddress().equals(theater.getTheaterAddress())).count()>0){
-            RESPONSE.setMessage("Duplicate entry "+theater.getTheaterName()+" for theater");
+            responseResult.setMessage("Duplicate entry "+theater.getTheaterName()+" for theater");
         }else {
             try {
                 theaterDao.save(theater);
@@ -331,21 +340,21 @@ public class CityServiceImpliment implements CityService{
                 vendor.addTheater(theater);
                 cityDao.save(city);
                 vendorDao.save(vendor);
-                RESPONSE.setStatus(1);
-                RESPONSE.setMessage("Theater added successfully");
-                RESPONSE.setObject(theater);
+                responseResult.setStatus(1);
+                responseResult.setMessage("Theater added successfully");
+                responseResult.setObject(theater);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        return RESPONSE;
+        return responseResult;
     }
 
     @Override
     public ResponseResult updateTheater(Integer theaterId, Theater theaterToUpdate) {
         Theater theater = getTheaterById(theaterId);
         if(theater==null){
-            RESPONSE.setMessage("Theater doesn't exist");
+            responseResult.setMessage("Theater doesn't exist");
         }else{
             theaterToUpdate.setId(theater.getId());
             theaterToUpdate.setCity(theater.getCity());
@@ -353,28 +362,28 @@ public class CityServiceImpliment implements CityService{
             theaterToUpdate.setVendor(theater.getVendor());
             try {
                 theaterDao.save(theaterToUpdate);
-                RESPONSE.setStatus(1);
-                RESPONSE.setMessage("Theater updated successfully");
+                responseResult.setStatus(1);
+                responseResult.setMessage("Theater updated successfully");
             } catch (Exception e) {
-                RESPONSE.setMessage("Duplicate entry "+theaterToUpdate.getTheaterAddress()+" for theater");
+                responseResult.setMessage("Duplicate entry "+theaterToUpdate.getTheaterAddress()+" for theater");
                 e.printStackTrace();
             }
         }
-        RESPONSE.setObject(theaterToUpdate);
-        return RESPONSE;
+        responseResult.setObject(theaterToUpdate);
+        return responseResult;
     }
 
     @Override
     public ResponseResult removeTheaterById(Integer theaterId) {
         try {
             theaterDao.deleteById(theaterId);
-            RESPONSE.setStatus(1);
-            RESPONSE.setMessage("Removed theater successfully");
+            responseResult.setStatus(1);
+            responseResult.setMessage("Removed theater successfully");
         } catch (Exception e) {
-            RESPONSE.setMessage("Theater Doesn't exist");
+            responseResult.setMessage("Theater Doesn't exist");
             e.printStackTrace();
         }
-        return RESPONSE;
+        return responseResult;
     }
     // theater --END
 
@@ -400,61 +409,61 @@ public class CityServiceImpliment implements CityService{
     public ResponseResult addMovieToTheater(Integer theaterId, Movie movie) {
         Theater theater = getTheaterById(theaterId);
         if(theater==null){
-            RESPONSE.setMessage("theater Doesn't exist");
+            responseResult.setMessage("theater Doesn't exist");
         }else{
             if(theater.getMovies().stream().filter(t->
                     t.getMovieName().equals(movie.getMovieName()) &&
                             t.getLanguage().equals(movie.getLanguage())).count()>0){
-                RESPONSE.setMessage("Duplicate Movie entry for theater");
+                responseResult.setMessage("Duplicate Movie entry for theater");
             }else{
                 try {
                     movieDao.save(movie);
                     theater.addMovie(movie);
                     theaterDao.save(theater);
-                    RESPONSE.setStatus(1);
-                    RESPONSE.setMessage("Added movie to theater successfully");
+                    responseResult.setStatus(1);
+                    responseResult.setMessage("Added movie to theater successfully");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-            RESPONSE.setObject(movie);
+            responseResult.setObject(movie);
         }
-        return RESPONSE;
+        return responseResult;
     }
 
     @Override
     public ResponseResult updateMovie(Integer movieId, Movie movieToUpdate) {
         Movie movie = getMovieById(movieId);
         if(movie == null){
-            RESPONSE.setMessage("Movie doesn't exist");
+            responseResult.setMessage("Movie doesn't exist");
         }else{
             movieToUpdate.setId(movie.getId());
             movieToUpdate.setTheater(movie.getTheater());
             movieToUpdate.setShows(movie.getShows());
             try {
                 movieDao.save(movieToUpdate);
-                RESPONSE.setStatus(1);
-                RESPONSE.setMessage("Movie updated successfully");
+                responseResult.setStatus(1);
+                responseResult.setMessage("Movie updated successfully");
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        RESPONSE.setObject(movieToUpdate);
-        return RESPONSE;
+        responseResult.setObject(movieToUpdate);
+        return responseResult;
     }
 
     @Override
     public ResponseResult removeMovieFromTheater(Integer movieId) {
         try {
             movieDao.deleteById(movieId);
-            RESPONSE.setMessage("Movie removed from theater successfully");
-            RESPONSE.setStatus(1);
+            responseResult.setMessage("Movie removed from theater successfully");
+            responseResult.setStatus(1);
 
         } catch (Exception e) {
-            RESPONSE.setMessage("Movie Doesn't exist");
+            responseResult.setMessage("Movie Doesn't exist");
             e.printStackTrace();
         }
-        return RESPONSE;
+        return responseResult;
     }
     //Movie --End
 
@@ -475,9 +484,9 @@ public class CityServiceImpliment implements CityService{
     public ResponseResult addShowToTheater(Integer movieId, Show show) {
         Movie movie = getMovieById(movieId);
         if(movie==null){
-            RESPONSE.setMessage("movie Doesn't exist");
+            responseResult.setMessage("movie Doesn't exist");
         }else if(movie.getShows().stream().filter(s -> s.getShowTime().equals(show.getShowTime())).count()>0) {
-            RESPONSE.setMessage("Duplicate show entry for movie");
+            responseResult.setMessage("Duplicate show entry for movie");
         }else {
             try {
                 Seating seating = new Seating();
@@ -487,47 +496,152 @@ public class CityServiceImpliment implements CityService{
                 show.setSeating(seating);
                 showDao.save(show);
                 seatingDao.save(seating);
-                RESPONSE.setMessage("Show added Successfully");
-                RESPONSE.setStatus(1);
-                RESPONSE.setObject(show);
+                responseResult.setMessage("Show added Successfully");
+                responseResult.setStatus(1);
+                responseResult.setObject(show);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        return RESPONSE;
+        return responseResult;
     }
 
     @Override
     public ResponseResult updateShowToTheater(Integer showId, Show showToUpdate) {
         Show show = getShowById(showId);
         if(show == null){
-            RESPONSE.setMessage("Show doesn't exist");
+            responseResult.setMessage("Show doesn't exist");
         }else{
             showToUpdate.setId(show.getId());
             showToUpdate.setMovie(show.getMovie());
             try {
                 showDao.save(showToUpdate);
-                RESPONSE.setStatus(1);
-                RESPONSE.setMessage("Updated Show Successfully");
+                responseResult.setStatus(1);
+                responseResult.setMessage("Updated Show Successfully");
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        RESPONSE.setObject(showToUpdate);
-        return RESPONSE;
+        responseResult.setObject(showToUpdate);
+        return responseResult;
     }
 
     @Override
     public ResponseResult removeShowFromTheater(Integer showId) {// remove show from movie
         try {
             showDao.deleteById(showId);
-            RESPONSE.setMessage("Removed Show Successfully");
-            RESPONSE.setStatus(1);
+            responseResult.setMessage("Removed Show Successfully");
+            responseResult.setStatus(1);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return RESPONSE;
+        return responseResult;
     }
     // Show --End
 
+
+    //Seating --Start
+    @Override
+    public Seating getSeatingById(Integer seatingId) {
+        Seating seating;
+        try {
+            seating = seatingDao.findById(seatingId).get();
+            return seating;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public ResponseResult bookSeats(Integer seatingId, Integer customerId, List<String> seats) {
+        Seating seating = getSeatingById(seatingId);
+        Customer customer = getCustomerById(customerId);
+        if (seating == null) {
+            responseResult.setMessage("Show is not available");
+        }else if(customer == null){
+            responseResult.setMessage("Invalid Customer: "+customerId);
+        }else{
+            List<Ticket> tickets = new ArrayList<>();
+            Ticket ticket;
+            Map<Character,Integer> seatMap = new SeatMapping().getSeatMap();
+            short[][] seatsToUpdate = seating.getSeats();
+            for(String seat: seats){
+                Character a = seat.charAt(0);
+                int rowIndex = seatMap.get(seat.charAt(0));
+                int columnIndex = Integer.parseInt(String.valueOf(seat.charAt(1)));
+                if(seatsToUpdate[rowIndex][columnIndex-1]==1){
+                    responseResult.setMessage("Seat: " + seat + " is already booked");
+                    return responseResult;
+                }else{
+                    seatsToUpdate[rowIndex][columnIndex-1]=1;
+                    ticket = new Ticket();
+                    ticket.setSeatNo(seat);
+                    seating.getShow().addTicket(ticket);
+                    customer.addTicket(ticket);
+                    tickets.add(ticket);
+                }
+            }
+            seating.setSeats(seatsToUpdate);
+            try {
+                seatingDao.save(seating);
+                ticketDao.saveAll(tickets);
+                responseResult.setStatus(1);
+                responseResult.setMessage("Booked show successfully");
+                responseResult.setObject(tickets);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return responseResult;
+    }
+
+    @Override
+    public ResponseResult cancelBooking(Integer showId, Integer customerId) {
+        Show show = getShowById(showId);
+        Customer customer = getCustomerById(customerId);
+        if(show==null){
+            responseResult.setMessage("Invalid ShowId: " + showId);
+        }else if(customer==null){
+            responseResult.setMessage("Invalid customerId: " + customerId);
+        }else{
+            List<Ticket> tickets = ticketDao.findTicketByCustomerIdAndShowId(show, customer);
+            Map<Character,Integer> seatMap = new SeatMapping().getSeatMap();
+            Seating seating = show.getSeating();
+            short[][] seatsToUpdate = seating.getSeats();
+            for(Ticket ticket: tickets){
+                String seat = ticket.getSeatNo();
+                Character a = seat.charAt(0);
+                int rowIndex = seatMap.get(seat.charAt(0));
+                int columnIndex = Integer.parseInt(String.valueOf(seat.charAt(1)));
+                seatsToUpdate[rowIndex][columnIndex-1]=0;
+            }
+            seating.setSeats(seatsToUpdate);
+            try {
+                seatingDao.save(seating);
+                ticketDao.deleteAll(tickets);
+                responseResult.setStatus(1);
+                responseResult.setMessage("Cancelled booking successfully");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return responseResult;
+    }
+
+
+
+
+    // Ticket --START
+    @Override
+    public Ticket getTicketById(Integer ticketId) {
+        Ticket ticket;
+        try {
+            ticket = ticketDao.findById(ticketId).get();
+            return ticket;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
