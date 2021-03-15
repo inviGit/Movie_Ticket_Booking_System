@@ -29,7 +29,7 @@ class Add_theater extends Component {
       
             theaterService.addTheater(this.state.cityId,this.state.vendorId,theater).then(res =>{
                 console.log(res);
-                this.props.history.push('/');
+                this.props.history.push('/login');
             });
        
     }
@@ -49,7 +49,7 @@ class Add_theater extends Component {
     }
 
     cancel(){
-        this.props.history.push('/');
+        this.props.history.push('/login');
     }
 
   

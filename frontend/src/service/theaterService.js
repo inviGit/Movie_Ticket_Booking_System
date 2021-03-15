@@ -18,7 +18,7 @@ class TheaterService {
     const headers = {
       "Content-Type": "application/json",
     };
-    return axios.post(url, data, headers);
+    return axios.put(url, data, headers);
   }
 
   updateTheater(theaterId, theater) {

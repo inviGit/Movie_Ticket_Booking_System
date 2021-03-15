@@ -28,7 +28,7 @@ class Update_theater extends Component {
       
             theaterService.updateTheater(this.state.theaterId,theater).then(res =>{
                 console.log(res);
-                this.props.history.push('/');
+                this.props.history.push('/login');
             });
        
     }
@@ -54,7 +54,7 @@ class Update_theater extends Component {
                    <div className = "container">
                         <div className = "row">
                             <div className = "card col-md-6 offset-md-3 offset-md-3">
-                               Add theater
+                              <h1>Update theater</h1> 
                                 <div className = "card-body">
                                     <form>
                                        

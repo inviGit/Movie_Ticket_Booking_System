@@ -22,9 +22,11 @@ export class login extends Component {
     };
     loginAndRegistrationService.login(user).then((res) => {
       localStorage.setItem("authorization", res.headers.authorization);
+      
     });
     CityService.getAllCities().then((res)=>{
       console.log(res.data);
+      this.props.history.push('/login');
     })
   };
 
