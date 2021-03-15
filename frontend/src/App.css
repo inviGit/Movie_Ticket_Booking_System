@@ -13,6 +13,17 @@
   }
 }
 
+table {
+  margin-left: 80px; 
+  margin-right: 80px; 
+  text-align: center;
+
+}
+.tab { 
+  display: inline-block; 
+  margin-left: 40px; 
+} 
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;

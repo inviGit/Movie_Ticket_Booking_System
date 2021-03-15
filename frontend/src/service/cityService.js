@@ -1,5 +1,5 @@
 import axios from "axios";
-import interceptors from "../Interceptors";
+//import interceptors from "../Interceptors";
 
 class CityService {
   getCity(cityId) {
