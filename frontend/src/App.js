@@ -1,13 +1,13 @@
 import "./App.css";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import Login from "./components/Login";
-import AdminHome from "./components/AdminHome";
-import CityDetails from "./components/CityDetails";
-import HeaderComponent from "./components/HeaderComponent";
-import EditCityDetails from "./components/EditCityDetails";
-import TheaterDetails from "./components/TheaterDetails";
-import MovieDetails from "./components/MovieDetails";
-import SeatDetails from "./components/SeatDetails";
+import Login from "./commonComponents/Login";
+import AdminHome from "./commonComponents/AdminHome";
+import CityDetails from "./commonComponents/CityDetails";
+import HeaderComponent from "./commonComponents/HeaderComponent";
+import EditCityDetails from "./commonComponents/EditCityDetails";
+import TheaterDetails from "./commonComponents/TheaterDetails";
+import MovieDetails from "./commonComponents/MovieDetails";
+import SeatDetails from "./commonComponents/SeatDetails";
 
 function App() {
   return (
