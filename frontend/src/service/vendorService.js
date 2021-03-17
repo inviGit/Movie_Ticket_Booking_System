@@ -7,6 +7,11 @@ class VendorService {
     return axios.get(url);
   }
 
+  getVendorByUserName(username) {
+    const url = `http://localhost:8080/api/v1/vendor/get-by-username/${username}`;
+    return axios.get(url);
+  }
+
   getAllVendors() {
     const url = `http://localhost:8080/api/v1/vendor/all`;
     return axios.get(url);

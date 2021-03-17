@@ -6,7 +6,6 @@ class TheaterService {
     const url = `http://localhost:8080/api/v1/theater/${theaterId}`;
     return axios.get(url);
   }
-
   getAllTheaters() {
     const url = `http://localhost:8080/api/v1/theater/all`;
     return axios.get(url);
@@ -18,7 +17,7 @@ class TheaterService {
     const headers = {
       "Content-Type": "application/json",
     };
-    return axios.post(url, data, headers);
+    return axios.put(url, data, headers);
   }
 
   updateTheater(theaterId, theater) {
