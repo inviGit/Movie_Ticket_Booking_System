@@ -27,6 +27,12 @@ public class VendorController {
         return cityService.getVendorById(vendorId);
     }
 
+    @GetMapping("/get-by-username/{username}")
+    @PreAuthorize("hasRole('ROLE_VENDOR')")
+    public Vendor getVendorByUserName(@PathVariable("username") String username){
+        return cityService.getVendorByUserName(username);
+    }
+
     @GetMapping("/all")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<Vendor> getAllVendors(){

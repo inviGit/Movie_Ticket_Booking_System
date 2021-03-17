@@ -10,9 +10,6 @@ import com.edac.project.models.theater.Ticket;
 import com.edac.project.models.users.ApplicationUser;
 import com.edac.project.models.users.Customer;
 import com.edac.project.models.users.Vendor;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -20,6 +17,7 @@ public interface CityService {
 
     //Vendor Registration --Start
     Vendor getVendorById(Integer vendorId);
+    Vendor getVendorByUserName(String username);
     List<Vendor> getAllVendors();
     ResponseResult addVendor(Vendor vendor);
     ResponseResult registerVendor(Integer vendorId, ApplicationUser applicationUser);

@@ -71,6 +71,21 @@ public class CityServiceImpliment implements CityService{
     }
 
     @Override
+    public Vendor getVendorByUserName(String username) {
+        ApplicationUser applicationUser;
+        try {
+            applicationUser = applicationUserDao.findById(username).get();
+        } catch (Exception e) {
+            applicationUser=null;
+        }
+        if(applicationUser!=null){
+            return vendorDao.findVendorByApplicationUser(applicationUser);
+        }else{
+            return null;
+        }
+    }
+
+    @Override
     public List<Vendor> getAllVendors() {
         return vendorDao.findAll();
     }
@@ -185,8 +200,8 @@ public class CityServiceImpliment implements CityService{
                             .encode(applicationUser.getPassword()));
             customer.setApplicationUser(applicationUser);
             try {
-                applicationUserDao.save(applicationUser);
                 customerDao.save(customer);
+                applicationUserDao.save(applicationUser);
                 responseResult.setStatus(1);
                 responseResult.setMessage("Customer Registered Successfully");
                 responseResult.setObject(applicationUser.getUsername());
