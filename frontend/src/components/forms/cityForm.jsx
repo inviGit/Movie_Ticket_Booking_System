@@ -1,16 +1,16 @@
 import React, { Component } from "react";
+import cityService from "../../service/cityService";
 import Form from "../common/form";
 import { toast } from "react-toastify";
-import vendorService from "../../service/vendorService";
 
-export class VendorForm extends Component {
+export class CityForm extends Component {
   state = {
-    vendor: {
-      name: "",
-      vendorEmail: "",
-      phoneNo: "",
+    city: {
+      pincode: "",
+      cityName: "",
+      stateName: "",
     },
-    title: "Add Vendor",
+    title: "City Form",
   };
 
   componentDidMount() {
@@ -20,14 +20,14 @@ export class VendorForm extends Component {
   }
 
   handleFormValueChange = (event) => {
-    const name = event.target.name;
-    this.setState((state) => (state.vendor[name] = event.target.value));
+    this.setState(
+      (state) => (state.city[event.target.name] = event.target.value)
+    );
   };
 
-  handleSuccess = (data) => {
-    toast(data.message);
-    toast("Vendor Id", data.object.id);
-    this.props.history.push(`/vendors`);
+  handleSuccess = (message) => {
+    toast(message);
+    this.props.history.push("/cities");
   };
 
   handleFailure = (message) => {
@@ -35,26 +35,24 @@ export class VendorForm extends Component {
   };
 
   handleSubmit = () => {
-    const { vendor } = this.state;
-    vendorService.addVendor(vendor).then((res) => {
-      console.log(res.data);
+    cityService.addCity(this.state.city).then((res) => {
       const { data } = res;
       data.status === 1
-        ? this.handleSuccess(data)
+        ? this.handleSuccess(data.message)
         : this.handleFailure(data.message);
     });
   };
 
   handleCancel = () => {
-    this.props.history.push(`/vendors`);
+    this.props.history.push("/city");
   };
 
   render() {
-    const { vendor, title } = this.state;
+    const { city, title } = this.state;
     return (
       <div>
         <Form
-          formObject={vendor}
+          formObject={city}
           title={title}
           onFormValueChange={this.handleFormValueChange}
           onSubmit={this.handleSubmit}
@@ -65,4 +63,4 @@ export class VendorForm extends Component {
   }
 }
 
-export default VendorForm;
+export default CityForm;

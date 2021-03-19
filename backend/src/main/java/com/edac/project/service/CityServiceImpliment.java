@@ -185,6 +185,22 @@ public class CityServiceImpliment implements CityService{
     }
 
     @Override
+    public Customer getCustomerByUserName(String username) {
+        ApplicationUser applicationUser;
+        try {
+            applicationUser = applicationUserDao.findById(username).get();
+        } catch (Exception e) {
+            applicationUser=null;
+        }
+        if(applicationUser!=null){
+            Customer customer = customerDao.findCustomerByApplicationUser(applicationUser);
+            return customer;
+        }else{
+            return null;
+        }
+    }
+
+    @Override
     public List<Customer> getAllCustomers() {
         return  customerDao.findAll();
     }
@@ -335,10 +351,10 @@ public class CityServiceImpliment implements CityService{
         Theater theater;
         try {
             theater = theaterDao.findById(theaterId).get();
+            return theater;
         } catch (Exception e) {
             return null;
         }
-        return theater;
     }
 
     @Override
@@ -360,11 +376,9 @@ public class CityServiceImpliment implements CityService{
             responseResult.setMessage("Duplicate entry "+theater.getTheaterName()+" for theater");
         }else {
             try {
-                theaterDao.save(theater);
                 city.addTheater(theater);
                 vendor.addTheater(theater);
-                cityDao.save(city);
-                vendorDao.save(vendor);
+                theaterDao.save(theater);
                 responseResult.setStatus(1);
                 responseResult.setMessage("Theater added successfully");
                 responseResult.setObject(theater);
@@ -587,10 +601,11 @@ public class CityServiceImpliment implements CityService{
     }
 
     @Override
-    public ResponseResult bookSeats(Integer seatingId, Integer customerId, List<String> seats) {
+        public ResponseResult bookSeats(Integer showId, Integer customerId, List<String> seats) {
         responseResult = new ResponseResult(0, "User Error", null);
-        Seating seating = getSeatingById(seatingId);
+        Show show = getShowById(showId);
         Customer customer = getCustomerById(customerId);
+        Seating seating = show.getSeating();
         if (seating == null) {
             responseResult.setMessage("Show is not available");
         }else if(customer == null){
@@ -611,18 +626,16 @@ public class CityServiceImpliment implements CityService{
                     seatsToUpdate[rowIndex][columnIndex-1]=1;
                     ticket = new Ticket();
                     ticket.setSeatNo(seat);
-                    seating.getShow().addTicket(ticket);
+                    show.addTicket(ticket);
                     customer.addTicket(ticket);
                     tickets.add(ticket);
                 }
             }
-            seating.setSeats(seatsToUpdate);
             try {
-                seatingDao.save(seating);
-                ticketDao.saveAll(tickets);
+                List<Ticket> savedTickets = ticketDao.saveAll(tickets);
                 responseResult.setStatus(1);
                 responseResult.setMessage("Booked show successfully");
-                responseResult.setObject(tickets);
+                responseResult.setObject(savedTickets);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -651,9 +664,7 @@ public class CityServiceImpliment implements CityService{
                 int columnIndex = Integer.parseInt(String.valueOf(seat.charAt(1)));
                 seatsToUpdate[rowIndex][columnIndex-1]=0;
             }
-            seating.setSeats(seatsToUpdate);
             try {
-                seatingDao.save(seating);
                 ticketDao.deleteAll(tickets);
                 responseResult.setStatus(1);
                 responseResult.setMessage("Cancelled booking successfully");
@@ -663,9 +674,6 @@ public class CityServiceImpliment implements CityService{
         }
         return responseResult;
     }
-
-
-
 
     // Ticket --START
     @Override

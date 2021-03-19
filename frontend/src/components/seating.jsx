@@ -7,29 +7,57 @@ import customerService from "../service/customerService";
 export class Seatings extends Component {
   state = {
     showId: "",
+    customerId: "",
     pageTitle: "WELCOME",
     seatingId: "",
     seats: [],
+    selectedSeats: [],
+    seatMap: {},
   };
 
   componentDidMount() {
     const showId = this.props.match.params.showId;
     showService.getShow(showId).then((res) => {
       const { seating } = res.data;
-      this.setState({ seats: seating.seats, seatingId: seating.id });
+      this.setState({ showId, seats: seating.seats, seatingId: seating.id });
     });
+    const username = localStorage.getItem("username");
+
+    customerService.getCustomerByUserName(username).then((res) => {
+      console.log(res);
+      this.setState({ customerId: res.data.id });
+    });
+    this.handleSeatMapping()
   }
 
   shouldComponentUpdate(nextProps, nextState) {
     return this.state.seats !== nextState.seats;
   }
 
+  handleSeatMapping = () => {
+    let seatMap = this.state.seatMap;
+    let char = "A";
+    for (let i = 0; i < 9; i++) {
+      seatMap[i] = char;
+      char = String.fromCharCode(char.charCodeAt() + 1);
+    }
+  };
+
   handelCheck = (rowIndex, colIndex) => {
-    let array = [...this.state.seats];
+    const {seats, selectedSeats, seatMap} = this.state;
+    let array = [...seats];
     let seatRow = array[rowIndex];
     seatRow[colIndex] = 1;
     array[rowIndex] = seatRow;
     this.setState({ array });
+    
+    let seatNo = seatMap[rowIndex]+(colIndex+1) 
+    console.log(seatNo);
+    
+    const selectedSeatIndex = selectedSeats.indexOf(seatNo);
+
+    selectedSeatIndex > -1 ? selectedSeats.splice(selectedSeatIndex, 1) : selectedSeats.push(seatNo)
+
   };
 
   handleSuccess = (message, userId) => {
@@ -42,22 +70,18 @@ export class Seatings extends Component {
   };
 
   handleBookShow = () => {
-    console.log(this.state.seats);
-    const { seatingId, seats } = this.state;
-    const username = localStorage.getItem("username");
-    let id="";
-    customerService.getCustomerByUserName(username).then((res)=>{
-      id = res.data.id;
-    })
-    seatingService.bookSeats(seatingId, id , seats).then((res) => {
-          console.log(res);
-      const { data } = res;
-      data.status === 1
-        ? this.handleSuccess(data.message, id)
-        : this.handleFailure(data.message);
-    });
-    // const userId = localStorage.getItem("userId");
-  };
+    const { showId, selectedSeats } = this.state;
+
+    seatingService
+      .bookSeats(showId, this.state.customerId, selectedSeats)
+      .then((res) => {
+        console.log(res);
+        const { data } = res;
+        data.status === 1
+          ? this.handleSuccess(data.message)
+          : this.handleFailure(data.message);
+      });
+      };
 
   render() {
     return (
@@ -102,7 +126,7 @@ export class Seatings extends Component {
             <button
               type="button"
               className="btn btn-dark"
-              onClick={()=>this.handleBookShow()}
+              onClick={() => this.handleBookShow()}
             >
               Book Seats
             </button>

@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import theaterService from "../../service/theaterService";
 import Form from "../common/form";
 import { toast } from "react-toastify";
+import vendorService from "../../service/vendorService";
 
 export class TheaterForm extends Component {
   state = {
@@ -18,7 +19,10 @@ export class TheaterForm extends Component {
     if(localStorage.getItem("role")!=="ROLE_VENDOR"){
       this.props.history.push("/not-authorized")
     }else{
-      this.setState({vendorId: localStorage.getItem("vendorId")});
+      vendorService.getVendorByUserName(localStorage.getItem("username")).then((res)=>{
+        console.log(res);
+        this.setState({vendorId: res.data.id})
+      })
     }
   }
   

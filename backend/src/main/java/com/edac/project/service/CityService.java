@@ -28,6 +28,7 @@ public interface CityService {
 
     //Customer --Start
     Customer getCustomerById(Integer customerId);
+    Customer getCustomerByUserName(String username);
     List<Customer> getAllCustomers();
     ResponseResult registerCustomer(ApplicationUser applicationUser, Customer customer);
     ResponseResult updateCustomer(Integer customerId, Customer customer);
@@ -71,7 +72,7 @@ public interface CityService {
 
     //Seating --Start
     Seating getSeatingById(Integer seatingId);
-    ResponseResult bookSeats(Integer seatingId, Integer customerId, List<String> seats);
+    ResponseResult bookSeats(Integer showId, Integer customerId, List<String> seats);
     ResponseResult cancelBooking(Integer showId, Integer customerId);
 
     //TICKET

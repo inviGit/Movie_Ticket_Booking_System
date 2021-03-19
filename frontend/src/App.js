@@ -1,30 +1,50 @@
+import React from "react";
+import { Redirect, Route, Router, Switch } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import Login from "./components/forms/loginForm";
+import Movies from "./components/movie";
+import MovieForm from "./components/forms/movieForm";
+import Theaters from "./components/theater";
+import TheaterForm from "./components/forms/theaterForm";
+import Shows from "./components/show";
+import Seatings from "./components/seating";
+import City from "./components/city";
+import CityForm from "./components/forms/cityForm";
+import ShowForm from "./components/forms/showForm";
+import RegisterUser from "./components/forms/registerUserForm";
+import Vendor from "./components/vendorsList";
+import VendorForm from "./components/forms/vendorForm";
+import { NotFound } from "./components/notFound";
+import  NotAuthorized  from "./components/notAuthorized";
+import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import Login from "./commonComponents/Login";
-import AdminHome from "./commonComponents/AdminHome";
-import CityDetails from "./commonComponents/CityDetails";
-import HeaderComponent from "./commonComponents/HeaderComponent";
-import EditCityDetails from "./commonComponents/EditCityDetails";
-import TheaterDetails from "./commonComponents/TheaterDetails";
-import MovieDetails from "./commonComponents/MovieDetails";
-import SeatDetails from "./commonComponents/SeatDetails";
 
 function App() {
   return (
-    <div className="App">
-      <Router>
-        <HeaderComponent/>
+    <React.Fragment>
+      <ToastContainer />
+      <div className="content">
         <Switch>
-          <Route path="/" exact component={Login}></Route>
-          <Route path = "/admin"  component={AdminHome}></Route>
-          <Route path = "/city/:id"  component={CityDetails}></Route>
-          <Route path = "/editcity/:id" component = {EditCityDetails}></Route>
-          <Route path = "/theater/:id" component = {TheaterDetails}></Route>
-          <Route path = "/movie/:id" component = {MovieDetails}></Route>
-          <Route path = "/seat" component = {SeatDetails}></Route>
+          <Route path="/show/:showId/seatings" component={Seatings} />
+          <Route path="/movie/:movieId/show-form" component={ShowForm} />
+          <Route path="/movie/:movieId/shows" component={Shows} />
+          <Route path="/theater/:theaterId/movie-form" component={MovieForm} />
+          <Route path="/theater/:theaterId/movies" component={Movies} />
+          <Route path="/movies" component={Movies} />
+          <Route path="/theater-form" component={TheaterForm} />
+          <Route path="/city/:cityId/theaters" component={Theaters} />
+          <Route path="/theaters" component={Theaters} />
+          <Route path="/city-form" component={CityForm} />
+          <Route path="/cities" component={City} />
+          <Route path="/vendor-form" component={VendorForm} />
+          <Route path="/vendors" component={Vendor} />
+          <Route path="/not-authorized" component={NotAuthorized} />
+          <Route path="/register/:user" exact component={RegisterUser} />
+
+          <Route path="/" exact component={Login} />
         </Switch>
-      </Router>
-    </div>
+      </div>
+    </React.Fragment>
   );
 }
 

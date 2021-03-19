@@ -7,6 +7,11 @@ class CustomerService {
     return axios.get(url);
   }
 
+  getCustomerByUserName(username) {
+    const url = `http://localhost:8080/api/v1/customer/get-by-username/${username}`;
+    return axios.get(url);
+  }
+
   getAllCustomers() {
     const url = `http://localhost:8080/api/v1/customer/all`;
     return axios.get(url);

@@ -7,8 +7,8 @@ getSeatingById(seatingId) {
     return axios.get(url);
   }
 
-  bookSeats(seatingId, customerId, seats) {
-    const url = `http://localhost:8080/api/v1/seating/book/${seatingId}/${customerId}`;
+  bookSeats(showId, customerId, seats) {
+    const url = `http://localhost:8080/api/v1/seating/book/${showId}/${customerId}`;
     const data = seats;
     const headers = {
       "Content-Type": "application/json",

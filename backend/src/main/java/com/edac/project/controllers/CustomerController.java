@@ -3,6 +3,7 @@ package com.edac.project.controllers;
 import com.edac.project.models.users.ApplicationUser;
 import com.edac.project.models.users.Customer;
 import com.edac.project.models.common.ResponseResult;
+import com.edac.project.models.users.Vendor;
 import com.edac.project.security.ApplicationUserRole;
 import com.edac.project.security.PasswordConfig;
 import com.edac.project.service.CityService;
@@ -28,6 +29,12 @@ public class CustomerController {
     @PreAuthorize("hasAnyRole('ROLE_CUSTOMER', 'ROLE_ADMIN')")
     public Customer getCustomerById(@PathVariable("customerId") Integer customerId){
         return cityService.getCustomerById(customerId);
+    }
+
+    @GetMapping("/get-by-username/{username}")
+    @PreAuthorize("hasRole('ROLE_CUSTOMER')")
+    public Customer getCustomerByUserName(@PathVariable("username") String username){
+        return cityService.getCustomerByUserName(username);
     }
 
     @GetMapping("/all")

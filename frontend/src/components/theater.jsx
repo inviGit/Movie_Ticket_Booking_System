@@ -21,6 +21,7 @@ export class Theaters extends Component {
       vendorService
         .getVendorByUserName(localStorage.getItem("username"))
         .then((res) => {
+          console.log(res);
           localStorage.setItem("userId", res.data.id);
           this.setState({ theaters: res.data.theaters });
           this.setState({ pageTitle: "Theaters under vendor" });

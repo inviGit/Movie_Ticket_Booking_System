@@ -28,12 +28,12 @@ public class SeatingController {
         return null;
     }
 
-    @PostMapping("/book/{seatingId}/{customerId}")
+    @PostMapping("/book/{showId}/{customerId}")
     @PreAuthorize("hasRole('ROLE_CUSTOMER')")
-    public ResponseResult bookSeats(@PathVariable("seatingId") Integer seatingId,
+    public ResponseResult bookSeats(@PathVariable("showId") Integer showId,
                                     @PathVariable("customerId")  Integer customerId,
                                     @RequestBody List<String> seats){
-        return cityService.bookSeats(seatingId, customerId, seats);
+        return cityService.bookSeats(showId, customerId, seats);
     }
 
     @PostMapping("/cancel/{showId}/{customerId}")
