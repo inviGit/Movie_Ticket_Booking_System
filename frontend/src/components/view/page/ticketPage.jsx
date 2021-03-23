@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import Card from "../../common/card";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilm, faTicketAlt } from "@fortawesome/free-solid-svg-icons";
-import SocialMediaButtons from "./../../../service/SocialMediaButtons";
 import Page from "../../common/page";
 
 export class TicketPage extends Component {
