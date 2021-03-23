@@ -4,8 +4,6 @@ import TableBody from "./tableBody";
 
 const Table = ({ columns, sortColumn, onSort, data }) => {
   return (
-    <div className="card col-md-6 offset-md-3 ">
-      <div className="card-body">
         <table className="table table-striped table-bordered">
           <TableHeader
             columns={columns}
@@ -14,8 +12,7 @@ const Table = ({ columns, sortColumn, onSort, data }) => {
           />
           <TableBody columns={columns} data={data} />
         </table>
-      </div>
-    </div>
+    
   );
 };
 

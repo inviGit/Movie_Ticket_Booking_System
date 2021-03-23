@@ -43,7 +43,6 @@ public class CustomerController {
         return cityService.getAllCustomers();
     }
 
-
     @PostMapping("/update/{customerId}")
     @PreAuthorize("hasRole('ROLE_CUSTOMER')")
     public ResponseResult updateCustomer(@PathVariable("customerId") Integer customerId,

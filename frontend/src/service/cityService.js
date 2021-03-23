@@ -30,7 +30,7 @@ class CityService {
     return axios.post(url, data, headers);
   }
 
-  removCity(cityId) {
+  removeCity(cityId) {
     const url = `http://localhost:8080/api/v1/city/remove/${cityId}`;
     return axios.delete(url);
   }

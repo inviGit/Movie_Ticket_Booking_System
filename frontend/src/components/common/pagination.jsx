@@ -1,14 +1,29 @@
 import React from "react";
 import _ from "lodash";
-import PropTypes from "prop-types"; 
+import PropTypes from "prop-types";
+
+import { makeStyles } from "@material-ui/core/styles";
+import Fab from "@material-ui/core/Fab";
 
 const Pagination = (props) => {
+  console.log("page", props);
   const { itemsCount, pageSize, currentPage, onPageChange } = props;
 
   const pagesCount = Math.ceil(itemsCount / pageSize);
 
   if (pagesCount === 1) return null;
   const pages = _.range(1, pagesCount + 1);
+
+  const classes = makeStyles((theme) => ({
+    root: {
+      "& > *": {
+        margin: theme.spacing(1),
+      },
+    },
+    extendedIcon: {
+      marginRight: theme.spacing(1),
+    },
+  }));
 
   return (
     <nav>
@@ -17,10 +32,16 @@ const Pagination = (props) => {
           <li
             key={page}
             className={page === currentPage ? "page-item active" : "page-item"}
+            style={{marginRight: "5px"}}
           >
-            <button className="page-link" onClick={() => onPageChange(page)} >
+            <Fab
+              size="small"
+              color={page === currentPage ? "primary" : "default"}
+              aria-label="add"
+              onClick={() => onPageChange(page)}
+            >
               {page}
-            </button>
+            </Fab>
           </li>
         ))}
       </ul>

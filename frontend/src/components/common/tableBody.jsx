@@ -4,7 +4,7 @@ import _ from "lodash";
 class tableBody extends Component {
   renderCell = (item, column) => {
     const content = _.get(item, column.path)
-    if(typeof content === "boolean") {const a = content? "Available": "Not available"; return a};
+    if(typeof content === "boolean") {const a = content? "Available": "Not available"; return a.toString()};
     if (column.content) return column.content(item);
     
     return content;

@@ -1,33 +1,34 @@
+import { Button } from "@material-ui/core";
 import React from "react";
 
 const ListGroup = (props) => {
-  const {
-    items,
-    textProperty,
-    valueProperty,
-    selectedItem,
-    onItemSelect,
-  } = props;
+  const { items, selectedItem, onItemSelect } = props;
   return (
-    <ul className="list-group" style={{ cursor: "pointer" }}>
-      {items.map((item) => (
-        <li
-          onClick={() => onItemSelect(item)}
-          key={item[valueProperty]}
-          className={
-            item === selectedItem ? "list-group-item active" : "list-group-item"
-          }
-        >
-          {item[textProperty]}
-        </li>
-      ))}
-    </ul>
+    <div>
+      <Button
+        className="btn btn-outline-primary dropdown-toggle dropdown-toggle-split"
+        color="primary"
+        data-toggle="dropdown"
+        aria-haspopup="true"
+        aria-expanded="false"
+      >
+       {selectedItem? selectedItem: items[0]} 
+      </Button>
+      <div className="dropdown-menu">
+        {items.map((item) => (
+          <Button
+            onClick={() => onItemSelect(item)}
+            key={item}
+            className={
+              item === selectedItem ? "dropdown-item active " : "dropdown-item"
+            }
+          >
+            {item}
+          </Button>
+        ))}
+      </div>
+    </div>
   );
-};
-
-ListGroup.defaultProps = {
-  textProperty: "name",
-  valueProperty: "_id",
 };
 
 export default ListGroup;
