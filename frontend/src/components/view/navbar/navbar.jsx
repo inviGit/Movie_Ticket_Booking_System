@@ -100,13 +100,38 @@ export class NavBar extends Component {
   };
 
   handleProfile = () => {
-    if(localStorage.getItem("role")==="ROLE_CUSTOMER"){
+    if (localStorage.getItem("role") === "ROLE_CUSTOMER") {
       window.location.href = `http://localhost:3000/customer/profile`;
-    }else if(localStorage.getItem("role")==="ROLE_VENDOR"){
+    } else if (localStorage.getItem("role") === "ROLE_VENDOR") {
       window.location.href = `http://localhost:3000/vendor/profile`;
     }
   };
 
+  handleRole = () => {
+    const { username } = this.state;
+    if (username !== null) {
+      const role = localStorage.getItem("role");
+      if (role === "ROLE_ADMIN") {
+        return (
+          <NavLink className="nav-link" to="/vendors">
+            Vendors
+          </NavLink>
+        );
+      } else if (role === "ROLE_VENDOR") {
+        return (
+          <NavLink className="nav-link" to="/theaters">
+            Theaters
+          </NavLink>
+        );
+      } else if (role === "ROLE_CUSTOMER") {
+        return (
+          <NavLink className="nav-link" to="/movies">
+            Movies
+          </NavLink>
+        );
+      }
+    }
+  };
   render() {
     const { cities, isDisabled } = this.state;
     const classes = makeStyles((theme) => ({
@@ -144,11 +169,7 @@ export class NavBar extends Component {
                   Cities
                 </NavLink>
               </li>
-              <li className="nav-item ">
-                <NavLink className="nav-link" to="/movies">
-                  Movies
-                </NavLink>
-              </li>
+              <li className="nav-item ">{this.handleRole()}</li>
             </ul>
             <Autocomplete
               id={"cities"}
@@ -167,7 +188,6 @@ export class NavBar extends Component {
               )}
             />
             {this.handleLog()}
-
             <button
               className="nav-item badge badge-dark"
               style={{ marginRight: "10px", marginLeft: "30px" }}
