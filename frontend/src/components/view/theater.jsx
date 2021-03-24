@@ -8,7 +8,7 @@ import Pagination from "../common/pagination";
 import { toast } from "react-toastify";
 import _ from "lodash";
 import AutocompleteInput from "../common/autocompleteInput";
-import { Button } from "@material-ui/core";
+import { Button, Grid, Paper } from "@material-ui/core";
 
 export class Theaters extends Component {
   state = {
@@ -111,19 +111,13 @@ export class Theaters extends Component {
   };
 
   getPagedData = () => {
-    const {
-      pageSize,
-      currentPage,
-      sortColumn,
-      allTheaters,
-      theaters,
-    } = this.state;
+    const { pageSize, currentPage, sortColumn, theaters } = this.state;
 
     const sorted = _.orderBy(theaters, [sortColumn.path], [sortColumn.order]);
 
     const filteredTheaters = paginate(sorted, currentPage, pageSize);
 
-    return { totalCount: allTheaters.length, data: filteredTheaters };
+    return { totalCount: filteredTheaters.length, data: filteredTheaters };
   };
 
   handleRole = () => {
@@ -131,12 +125,13 @@ export class Theaters extends Component {
     if (role === "ROLE_VENDOR") {
       return (
         <Button
-        variant="contained"
-        color="primary"
-        onClick={() => this.handleTheaterForm()}
-      >
-        Add Theater
-      </Button>
+          variant="contained"
+          color="primary"
+          style={{ marginBottom: "20px" }}
+          onClick={() => this.handleTheaterForm()}
+        >
+          Add Theater
+        </Button>
       );
     }
   };
@@ -153,36 +148,38 @@ export class Theaters extends Component {
     const { totalCount, data: filteredTheaters } = this.getPagedData();
 
     return (
-      <div className="container">
-        <div className="row ">
-          <div className="col">
-            {" "}
-            <h3>{pageTitle}</h3>
-            <p>Showing {totalCount} theaters</p>
-            {this.handleRole()}
-          </div>
-        </div>
-        <div className="row mx-lg-n5" style={{ marginTop: "10px" }}>
-          <div className="col py-3 px-lg-5  bg-light">
-            <AutocompleteInput
-              data={allTheaters}
-              onCitySelect={this.handleTheaterSelect}
-            />
-            <TheaterTable
-              theaters={filteredTheaters}
-              sortColumn={sortColumn}
-              onDelete={this.handleDelete}
-              onUpdate={this.handleUpdate}
-              onSort={this.handleSort}
-            />
-            <Pagination
-              itemsCount={totalCount}
-              pageSize={pageSize}
-              currentPage={currentPage}
-              onPageChange={this.handlePageChange}
-            />
-          </div>
-        </div>
+      <div style={{ flexGrow: "1", marginTop: "20px" }}>
+        <Grid container direction="row" justify="center" alignItems="center">
+          <Grid item xs={10}>
+            <Paper>
+              {" "}
+              <AutocompleteInput
+                data={allTheaters}
+                onCitySelect={this.handleTheaterSelect}
+              />
+            </Paper>
+          </Grid>
+          <Grid item xs={10}>
+            <Paper>
+              <div className="col py-3 px-lg-5  bg-light">
+                {this.handleRole()}
+                <TheaterTable
+                  theaters={filteredTheaters}
+                  sortColumn={sortColumn}
+                  onDelete={this.handleDelete}
+                  onUpdate={this.handleUpdate}
+                  onSort={this.handleSort}
+                />
+                <Pagination
+                  itemsCount={totalCount}
+                  pageSize={pageSize}
+                  currentPage={currentPage}
+                  onPageChange={this.handlePageChange}
+                />
+              </div>
+            </Paper>
+          </Grid>
+        </Grid>
       </div>
     );
   }

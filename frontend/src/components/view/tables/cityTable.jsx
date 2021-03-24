@@ -31,6 +31,7 @@ export class CityTable extends Component {
           <Button
             variant="contained"
             color="secondary"
+            style={{ flexGrow: "1" }}
             onClick={() => this.props.onDelete(city)}
           >
             Delete

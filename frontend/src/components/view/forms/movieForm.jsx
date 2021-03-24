@@ -3,6 +3,8 @@ import movieService from "../../../service/movieService";
 import { Form } from "../../common/form";
 import { toast } from "react-toastify";
 import _ from "lodash";
+import { language } from './../../../constants/language';
+import { genre } from './../../../constants/genre';
 
 export class MovieForm extends Component {
   state = {
@@ -13,31 +15,8 @@ export class MovieForm extends Component {
       actor: "",
       actress: "",
       director: "",
-      language: [
-        "None",
-        "Telugu",
-        "Hindi",
-        "English",
-        "Kannada",
-        "Tamil",
-        "Malayalam",
-      ],
-      genre: [
-        "None",
-        "Fantasy",
-        "Thriller",
-        "SciFi",
-        "Action",
-        "Periodic",
-        "Comedy",
-        "Drama",
-        "Crime",
-        "Animation",
-        "Fiction",
-        "Horror",
-        "Adventure",
-        "Romantic",
-      ],
+      language: language,
+      genre: genre,
       activeStatus: ["true", "false"],
     },
     genre: "",

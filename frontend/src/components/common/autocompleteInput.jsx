@@ -3,7 +3,7 @@ import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import _ from "lodash";
 
-export default function AutocompleteInput({ data, onCitySelect }) {
+export default function AutocompleteInput({ data, onItemSelect }) {
   let optionName = "";
   if (!_.isUndefined(data) && _.size(data) > 0) {
     Object.keys(data[0]).map(function (value) {
@@ -19,7 +19,7 @@ export default function AutocompleteInput({ data, onCitySelect }) {
       fullWidth
       getOptionLabel={(option) => option[optionName]}
       style={{ marginBottom: "10px" }}
-      onChange={onCitySelect}
+      onChange={onItemSelect}
       renderInput={(params) => (
         <TextField {...params} label="Search" variant="outlined" />
       )}

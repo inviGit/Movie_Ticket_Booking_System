@@ -1,6 +1,11 @@
 import React from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import { makeStyles } from "@material-ui/core/styles";
+import Grid from "@material-ui/core/Grid";
+import "react-toastify/dist/ReactToastify.css";
+import "./App.css";
 import Login from "./components/view/forms/loginForm";
 import Movies from "./components/view/movie";
 import MovieForm from "./components/view/forms/movieForm";
@@ -14,27 +19,24 @@ import ShowForm from "./components/view/forms/showForm";
 import RegisterUser from "./components/view/forms/registerUserForm";
 import Vendor from "./components/view/vendors";
 import VendorForm from "./components/view/forms/vendorForm";
+import CustomerProfile from "./components/view/profile/customerProfile";
+import VendorProfile from "./components/view/profile/vendorProfile";
 import NotFound from "./components/pageHandling/notFound";
 import NotAuthorized from "./components/pageHandling/notAuthorized";
-import "react-toastify/dist/ReactToastify.css";
-import "./App.css";
 import NavBar from "./components/view/navbar/navbar";
 import { Logout } from "./components/pageHandling/logout";
 import NotAuthenticated from "./components/pageHandling/notAuthenticated";
-import { Home } from "./components/view/home";
-import { makeStyles } from "@material-ui/core/styles";
-import CssBaseline from "@material-ui/core/CssBaseline";
-
-import Grid from "@material-ui/core/Grid";
-import { BookingConfirmation } from './components/view/page/bookingConfirmation';
-import { Profile } from './components/view/profile/profile';
+import { BookingConfirmation } from "./components/view/page/bookingConfirmation";
+import CustomerForm from "./components/view/forms/customerForm";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     height: "100vh",
+    flexGrow: 1,
   },
   image: {
-    backgroundImage: "url(https://source.unsplash.com/random)",
+    flexGrow: "1",
+    backgroundImage: "url(https://source.unsplash.com/random?grayscale)",
     backgroundRepeat: "no-repeat",
     backgroundColor:
       theme.palette.type === "light"
@@ -69,13 +71,27 @@ function App() {
 
           <div className="content">
             <Switch>
-            <Route
-                path="/customer/:userId/profile"
-                component={isAuthenticated ? Profile : NotAuthenticated}
+              <Route
+                path="/vendor/:userId/vendor-form"
+                component={isAuthenticated ? VendorForm : NotAuthenticated}
               />
-            <Route
+              <Route
+                path="/vendor/profile"
+                component={isAuthenticated ? VendorProfile : NotAuthenticated}
+              />
+              <Route
+                path="/customer/:userId/customer-form"
+                component={isAuthenticated ? CustomerForm : NotAuthenticated}
+              />
+              <Route
+                path="/customer/profile"
+                component={isAuthenticated ? CustomerProfile : NotAuthenticated}
+              />
+              <Route
                 path="/show/:showId/booking"
-                component={isAuthenticated ? BookingConfirmation : NotAuthenticated}
+                component={
+                  isAuthenticated ? BookingConfirmation : NotAuthenticated
+                }
               />
               <Route
                 path="/show/:showId/show-form"
@@ -150,7 +166,6 @@ function App() {
                 path="/vendors"
                 component={isAuthenticated ? Vendor : NotAuthenticated}
               />
-              <Route path="/home" component={Home} />
               <Route path="/logout" component={Logout} />
               <Route path="/not-found" component={NotFound} />
               <Route path="/not-authorized" exact component={NotAuthorized} />

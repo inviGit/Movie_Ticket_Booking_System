@@ -1,11 +1,10 @@
 import React, { Component } from "react";
-import seatingService from "../../service/seatingService";
-import showService from "../../service/showService";
 import { toast } from "react-toastify";
-import customerService from "../../service/customerService";
-import { Button, Typography } from "@material-ui/core";
+import { Button, Grid, Typography } from "@material-ui/core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRupeeSign, faTicketAlt } from "@fortawesome/free-solid-svg-icons";
+import showService from "../../service/showService";
+import customerService from "../../service/customerService";
 import _ from "lodash";
 
 export class Seatings extends Component {
@@ -98,14 +97,14 @@ export class Seatings extends Component {
     }
   };
 
-  handleCancel=()=>{
-    this.props.history.push(`/movie/${this.state.movieId}/shows`)
-  }
+  handleCancel = () => {
+    this.props.history.push(`/movie/${this.state.movieId}/shows`);
+  };
 
   render() {
     const { seats } = this.state;
     return (
-      <div>
+      <div style={{ flexGrow: "1", marginTop: "20px" }}>
         <div
           className="card col-md-6 offset-md-3 offset-md-3"
           style={{ marginTop: "40px" }}

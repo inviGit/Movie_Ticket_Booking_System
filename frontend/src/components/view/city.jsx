@@ -9,7 +9,7 @@ import _ from "lodash";
 import { toast } from "react-toastify";
 import { Link, Redirect } from "react-router-dom";
 import AutocompleteInput from "../common/autocompleteInput";
-import { Button } from "@material-ui/core";
+import { Button, Grid, Paper } from "@material-ui/core";
 
 export class City extends Component {
   state = {
@@ -101,6 +101,7 @@ export class City extends Component {
         <Button
           variant="contained"
           color="primary"
+          style={{ marginBottom: "20px" }}
           onClick={() => this.handleCityForm()}
         >
           Add City
@@ -121,37 +122,39 @@ export class City extends Component {
     const { totalCount, data: filteredCities } = this.getPagedData();
 
     return (
-      <div className="container ">
-        <div className="row ">
-          <div className="col">
-            {" "}
-            <h3>{pageTitle}</h3>
-            <p>Showing {totalCount} cities</p>
-            {this.handleRole()}
-          </div>
-        </div>
-        <div className="row mx-lg-n5" style={{ marginTop: "10px" }}>
-          <div className="col py-3 px-lg-5  bg-light">
-            <AutocompleteInput
-              data={allCities}
-              onCitySelect={this.handleCitySelect}
-            />
-            <CityTable
-              cities={filteredCities}
-              sortColumn={sortColumn}
-              onLike={this.handleLike}
-              onDelete={this.handleDelete}
-              onUpdate={this.handleUpdate}
-              onSort={this.handleSort}
-            />
-            <Pagination
-              itemsCount={totalCount}
-              pageSize={pageSize}
-              currentPage={currentPage}
-              onPageChange={this.handlePageChange}
-            />
-          </div>
-        </div>
+      <div style={{ flexGrow: "1", marginTop: "20px" }}>
+        <Grid container direction="row" justify="center" alignItems="center">
+          <Grid item xs={10}>
+            <Paper>
+              {" "}
+              <AutocompleteInput
+                data={allCities}
+                onCitySelect={this.handleCitySelect}
+              />
+            </Paper>
+          </Grid>
+          <Grid item xs={10}>
+            <Paper>
+              <div className="col py-3 px-lg-5  bg-light">
+                {this.handleRole()}
+                <CityTable
+                  cities={filteredCities}
+                  sortColumn={sortColumn}
+                  onLike={this.handleLike}
+                  onDelete={this.handleDelete}
+                  onUpdate={this.handleUpdate}
+                  onSort={this.handleSort}
+                />
+                <Pagination
+                  itemsCount={totalCount}
+                  pageSize={pageSize}
+                  currentPage={currentPage}
+                  onPageChange={this.handlePageChange}
+                />
+              </div>
+            </Paper>
+          </Grid>
+        </Grid>
       </div>
     );
   }

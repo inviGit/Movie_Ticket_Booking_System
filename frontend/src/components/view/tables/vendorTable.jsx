@@ -1,3 +1,4 @@
+import { Button } from "@material-ui/core";
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import Table from "../../common/table";
@@ -19,6 +20,18 @@ export class VendorTable extends Component {
     },
     { path: "vendorEmail", label: "Email" },
     { path: "phoneNo", label: "Phone Number" },
+    {
+      key: "delete",
+      content: (vendor) => (
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => this.props.onDelete(vendor)}
+        >
+          Delete
+        </Button>
+      ),
+    },
   ];
 
   render() {

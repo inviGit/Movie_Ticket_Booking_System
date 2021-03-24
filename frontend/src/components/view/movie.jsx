@@ -7,35 +7,52 @@ import MovieTable from "../view/tables/movieTable";
 import theaterService from "../../service/theaterService";
 import MovieCard from "./cards/movieCard";
 import { toast } from "react-toastify";
-import _, { filter } from "lodash";
-import { Button, Fab, Typography } from "@material-ui/core";
-import AddIcon from "@material-ui/icons/Add";
+import { Button, Grid, Paper, Typography } from "@material-ui/core";
 import AutocompleteInput from "../common/autocompleteInput";
-import MoviePage from "./page/moviePage";
 import TheaterPage from "./page/theaterPage";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGripLines } from "@fortawesome/free-solid-svg-icons";
-import { genre } from './../../constants/genre';
-import {language} from "../../constants/language"
+import { genre } from "./../../constants/genre";
+import { language } from "../../constants/language";
+import _ from "lodash";
+
 export class Movies extends Component {
   state = {
     theaterId: "",
     theater: "",
     allMovies: [],
     movies: [],
-    pageSize: 4,
-    currentPage: 1,
     genres: genre,
     language: language,
     selectedGenre: "",
     selectedLanguage: "",
+    pageSize: 5,
+    currentPage: 1,
     sortColumn: { path: "title", order: "asc" },
     pageTitle: "WELCOME",
   };
 
   componentDidMount() {
-    console.log(this.props.match.params.theaterId);
-    if (_.isUndefined(this.props.match.params.theaterId)) {
+    try {
+      const theaterId = this.props.match.params.theaterId;
+      if (_.isUndefined(theaterId)) {
+        movieService.getAllMovies().then((res) => {
+          this.setState({
+            movies: res.data,
+            allMovies: res.data,
+          });
+          this.setState({ pageTitle: "All Movies" });
+        });
+      } else {
+        theaterService.getTheater(theaterId).then((res) => {
+          console.log(res);
+          this.setState({ theaterId: res.data.id, theater: res.data });
+          this.setState({
+            movies: res.data.movies,
+            allMovies: res.data.movies,
+          });
+          this.setState({ pageTitle: "Movies is theater" });
+        });
+      }
+    } catch (error) {
       movieService
         .getAllMovies()
         .then((res) => {
@@ -43,7 +60,7 @@ export class Movies extends Component {
             movies: res.data,
             allMovies: res.data,
           });
-          this.setState({ pageSize: 8, pageTitle: "All Movies" });
+          this.setState({ pageTitle: "All Movies" });
         })
         .catch((error) => {
           toast(error);
@@ -51,14 +68,6 @@ export class Movies extends Component {
             toast("Please Login First");
           }
         });
-    } else {
-      const theaterId = this.props.match.params.theaterId;
-      theaterService.getTheater(theaterId).then((res) => {
-        console.log(res);
-        this.setState({ theaterId: res.data.id, theater: res.data });
-        this.setState({ movies: res.data.movies, allMovies: res.data.movies });
-        this.setState({ pageTitle: "Movies is theater" });
-      });
     }
   }
 
@@ -86,6 +95,7 @@ export class Movies extends Component {
   handleShowClick = (movie) => {
     this.props.history.push(`/movie/${movie.id}/shows`);
   };
+
   handleSuccess = (message) => {
     toast(message);
     window.location.reload();
@@ -137,8 +147,8 @@ export class Movies extends Component {
       );
     } else {
       return (
-        <div >
-          <MovieCard movies={movies} onShowClick={this.handleShowClick} />;
+        <div className="row">
+          <MovieCard movies={movies} onShowClick={this.handleShowClick} />
         </div>
       );
     }
@@ -152,6 +162,7 @@ export class Movies extends Component {
           <Button
             variant="contained"
             color="primary"
+            style={{ marginBottom: "20px" }}
             onClick={() => this.handleMovieForm()}
           >
             Add Movie
@@ -168,7 +179,6 @@ export class Movies extends Component {
       sortColumn,
       selectedGenre,
       selectedLanguage,
-      allMovies,
       movies,
     } = this.state;
 
@@ -203,62 +213,68 @@ export class Movies extends Component {
     const { totalCount, data: filteredMovies } = this.getPagedData();
 
     return (
-      <div className="container ">
-        <div className="row ">
-          <div className="col-2"> </div>
-          <div className="col">
-            {" "}
-            <h3>{pageTitle}</h3>
-            <p>Showing {totalCount} movies</p>
-            {this.handleRole()}
-          </div>
-        </div>
-        <div className="row mx-lg-n5" style={{ marginTop: "10px" }}>
-          <div className="col-2 py-3 px-lg-5  bg-light">
+      <div style={{ flexGrow: "1", marginTop: "20px" }}>
+        <Grid container direction="row" justify="center" alignItems="center">
+          <Grid item xs={10}>
+            <Paper>
+              {" "}
+              <AutocompleteInput
+                data={allMovies}
+                onItemSelect={this.handleMovieSelect}
+              />
+            </Paper>
+          </Grid>
+          <Grid item xs={12}></Grid>
+          <Grid item xs={"auto"}>
             <span className="badge badge-dark">Filter:</span>
-            <div style={{ marginTop: "10px" }}>
+            <Grid></Grid>
+          </Grid>
+          <Grid item xs={"auto"}>
+            <Paper>
               <ListGroup
                 items={this.state.genres}
                 selectedItem={this.state.selectedGenre}
                 onItemSelect={this.handleGenreSelect}
               />
-            </div>
-            <div style={{ marginTop: "10px" }}>
+            </Paper>
+          </Grid>
+          <Grid item xs={"auto"}>
+            <Paper>
               <ListGroup
                 items={this.state.language}
                 selectedItem={this.state.selectedLanguage}
                 onItemSelect={this.handleLanguageSelect}
               />
-            </div>
-            <div>
-              <hr />
-
-              {!_.isEmpty(this.state.theater) ? (
-                <Typography variant="h6" component="h1">
-                  Theater Details:
-                  <TheaterPage theater={theater} />
-                </Typography>
-              ) : (
-                <h1></h1>
-              )}
-            </div>
-          </div>
-          <div className="col py-3 px-lg-5  bg-light">
-            <AutocompleteInput
-              data={allMovies}
-              onCitySelect={this.handleMovieSelect}
-            />
-            {this.handleView(filteredMovies, sortColumn)}
-            <div style={{ marginTop: "20px" }}>
-              <Pagination
-                itemsCount={totalCount}
-                pageSize={pageSize}
-                currentPage={currentPage}
-                onPageChange={this.handlePageChange}
-              />
-            </div>
-          </div>
-        </div>
+            </Paper>
+          </Grid>
+          <Grid item xs={4}></Grid>
+          <Grid item xs={3}>
+            {!_.isEmpty(this.state.theater) ? (
+              <div style={{ marginTop: "10px" }}>
+                <TheaterPage theater={theater} />
+              </div>
+            ) : (
+              <h1></h1>
+            )}
+          </Grid>
+          <Grid item xs={10}>
+            <Paper>
+              <div
+                className="col py-3 px-lg-5  bg-light"
+                style={{ marginTop: "10px" }}
+              >
+                {this.handleRole()}
+                {this.handleView(filteredMovies, sortColumn)}
+                <Pagination
+                  itemsCount={totalCount}
+                  pageSize={pageSize}
+                  currentPage={currentPage}
+                  onPageChange={this.handlePageChange}
+                />
+              </div>
+            </Paper>
+          </Grid>
+        </Grid>
       </div>
     );
   }

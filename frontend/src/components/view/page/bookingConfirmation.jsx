@@ -11,9 +11,6 @@ import { faRupeeSign } from "@fortawesome/free-solid-svg-icons";
 import seatingService from "../../../service/seatingService";
 import { toast } from "react-toastify";
 
-//showid
-//selectedSeats
-//cstomerID
 export class BookingConfirmation extends Component {
   constructor(props) {
     super(props);
@@ -22,12 +19,11 @@ export class BookingConfirmation extends Component {
     const selectedSeats = props.location.state.selectedSeats;
 
     this.state = { showId, customerId, selectedSeats };
-    console.log(this.state);
   }
 
   handleSuccess = (message, userId) => {
     toast(message);
-    this.props.history.push(`/customer/${userId}/tickets`);
+    this.props.history.replace(`/customer/profile`);
   };
 
   handleFailure = (message) => {
@@ -108,10 +104,18 @@ export class BookingConfirmation extends Component {
           <Button variant="contained" color="primary" onClick={()=>this.handleProceed()}>
             Proceed To Payment
           </Button>
+          <Button variant="contained" color="secondary" onClick={()=>this.handleCancel()}>
+            Cancel
+          </Button>
         </CardActions>
       </Card>
     );
   };
+
+  handleCancel=()=>{
+    console.log(this.props);
+    this.props.history.goBack();
+  }
 
   render() {
     return (

@@ -6,7 +6,7 @@ import ShowTable from "../view/tables/showTable";
 import _ from "lodash";
 import { toast } from "react-toastify";
 import showService from "../../service/showService";
-import { Button } from "@material-ui/core";
+import { Button, Grid, Paper } from "@material-ui/core";
 import MoviePage from "./page/moviePage";
 import Page from "../common/page";
 
@@ -53,6 +53,7 @@ export class Shows extends Component {
           <Button
             variant="contained"
             color="primary"
+            style={{ marginBottom: "20px" }}
             onClick={() => this.handleShowForm()}
           >
             Add Show
@@ -93,38 +94,48 @@ export class Shows extends Component {
   };
 
   render() {
-    const { pageTitle, pageSize, currentPage, sortColumn, movie, movieId } = this.state;
+    const {
+      pageTitle,
+      pageSize,
+      currentPage,
+      sortColumn,
+      movie,
+      movieId,
+    } = this.state;
     const { totalCount, data: shows } = this.getPagedData();
 
     return (
-      <div className="container">
-        <div className="row ">
-          <div className="col">
-            {" "}
-            <h3>{pageTitle}</h3>
-            <p>Showing {totalCount} shows</p>
-            {this.handleRole()}
+      <div style={{ flexGrow: "1", marginTop: "20px" }}>
+        <Grid container direction="row" justify="center" alignItems="center">
+          <Grid item xs={3}>
             {!_.isEmpty(movie) ? <MoviePage movie={movie} /> : <h1>hi</h1>}
-          </div>
-        </div>
-        <div className="row mx-lg-n5" style={{ marginTop: "10px" }}>
-          <div className="col py-3 px-lg-5  bg-light">
-            <ShowTable
-              movieId={movieId}
-              shows={shows}
-              sortColumn={sortColumn}
-              onLike={this.handleLike}
-              onDelete={this.handleDelete}
-              onSort={this.handleSort}
-            />
-            <Pagination
-              itemsCount={totalCount}
-              pageSize={pageSize}
-              currentPage={currentPage}
-              onPageChange={this.handlePageChange}
-            />
-          </div>
-        </div>
+          </Grid>
+
+          <Grid item xs={10}>
+            <Paper>
+              <div
+                className="col py-3 px-lg-5  bg-light"
+                style={{ marginTop: "10px" }}
+              >
+                {this.handleRole()}
+                <ShowTable
+                  movieId={movieId}
+                  shows={shows}
+                  sortColumn={sortColumn}
+                  onLike={this.handleLike}
+                  onDelete={this.handleDelete}
+                  onSort={this.handleSort}
+                />
+                <Pagination
+                  itemsCount={totalCount}
+                  pageSize={pageSize}
+                  currentPage={currentPage}
+                  onPageChange={this.handlePageChange}
+                />
+              </div>
+            </Paper>
+          </Grid>
+        </Grid>
       </div>
     );
   }

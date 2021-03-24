@@ -2,8 +2,6 @@ import { Button } from "@material-ui/core";
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import Card from "../../common/card";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFilm } from "@fortawesome/free-solid-svg-icons";
 
 export class MovieCard extends Component {
   columns = [
@@ -11,8 +9,8 @@ export class MovieCard extends Component {
       key: "image",
       content: () => (
         <img
-        src="https://picsum.photos/2000/2000/"
-        class="card-img-top"
+        src="https://picsum.photos/200/200/"
+        className="card-img-top"
         alt="..."
       />
       ),

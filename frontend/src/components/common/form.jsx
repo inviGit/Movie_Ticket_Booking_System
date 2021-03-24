@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
   },
   // https://picsum.photos/2000/2000/
   image: {
-    backgroundImage: "url(https://source.unsplash.com/random)",
+    backgroundImage: "url(https://source.unsplash.com/random?grayscale)",
     backgroundRepeat: "no-repeat",
     backgroundColor:
       theme.palette.type === "light"

@@ -12,9 +12,8 @@ export class TheaterPage extends Component {
   ];
   render() {
     const { theater } = this.props;
-    console.log(theater);
     return (
-      <div style={{ marginTop: "10px" }}>
+      <div>
         <Page columns={this.columns} data={theater} />
       </div>
     );

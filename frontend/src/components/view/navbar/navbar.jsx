@@ -7,10 +7,7 @@ import cityService from "../../../service/cityService";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
 import { Button, Fab, makeStyles } from "@material-ui/core";
-import AddIcon from "@material-ui/icons/Add";
-import EditIcon from "@material-ui/icons/Edit";
-import FavoriteIcon from "@material-ui/icons/Favorite";
-import NavigationIcon from "@material-ui/icons/Navigation";
+import _ from "lodash";
 
 export class NavBar extends Component {
   state = {
@@ -99,12 +96,20 @@ export class NavBar extends Component {
     }
   };
 
-  handelCitySelect=(event, city)=>{
+  handelCitySelect = (event, city) => {
     window.location.href = `http://localhost:3000/city/${city.pincode}/theaters`;
-  }
-  
+  };
+
+  handleProfile = () => {
+    if(localStorage.getItem("role")==="ROLE_CUSTOMER"){
+      window.location.href = `http://localhost:3000/customer/profile`;
+    }else if(localStorage.getItem("role")==="ROLE_VENDOR"){
+      window.location.href = `http://localhost:3000/vendor/profile`;
+    }
+  };
+
   render() {
-    const { cities } = this.state;
+    const { cities, isDisabled } = this.state;
     const classes = makeStyles((theme) => ({
       root: {
         "& > *": {
@@ -135,11 +140,6 @@ export class NavBar extends Component {
 
           <div className="collapse navbar-collapse" id="navbarTogglerDemo02">
             <ul className="navbar-nav mr-auto mt-2 mt-lg-0">
-              <li className="nav-item">
-                <NavLink className="nav-link" to="/home">
-                  Home
-                </NavLink>
-              </li>
               <li className="nav-item">
                 <NavLink className="nav-link" to="/cities">
                   Cities
@@ -172,6 +172,8 @@ export class NavBar extends Component {
             <button
               className="nav-item badge badge-dark"
               style={{ marginRight: "10px", marginLeft: "30px" }}
+              onClick={this.handleProfile}
+              disabled={_.isNull(localStorage.getItem("username"))}
             >
               Profile
             </button>

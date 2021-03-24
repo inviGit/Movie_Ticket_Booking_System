@@ -1,9 +1,8 @@
 import { Button } from "@material-ui/core";
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
 import Card from "../../common/card";
 
-export class CustomerCard extends Component {
+export class UserCard extends Component {
   columns = [
     {
       path: "name",
@@ -19,7 +18,7 @@ export class CustomerCard extends Component {
         <Button
           variant="contained"
           color="primary"
-          //   onClick={() => this.props.onShowClick(movie)}
+            onClick={() => this.props.onEdit(user)}
         >
             Edit Details
         </Button>
@@ -32,11 +31,11 @@ export class CustomerCard extends Component {
     let data = [];
     data.push(user);
     return (
-      <div>
+      <div >
         <Card columns={this.columns} data={data} />
       </div>
     );
   }
 }
 
-export default CustomerCard;
+export default UserCard;

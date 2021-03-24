@@ -241,6 +241,7 @@ public class CityServiceImpliment implements CityService{
             try {
                 customerToUpdate.setId(customer.getId());
                 customerToUpdate.setApplicationUser(customer.getApplicationUser());
+                customerToUpdate.setTickets(customer.getTickets());
                 customerDao.save(customerToUpdate);
                 responseResult.setStatus(1);
                 responseResult.setMessage("Customer details updated successfully");
