@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
@@ -52,7 +53,8 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
   },
 }));
-
+=======
+  
 function App() {
   let isAuthenticated = false;
   const classes = useStyles();
@@ -62,6 +64,7 @@ function App() {
   }
 
   return (
+
     <React.Fragment>
       <Grid container component="main" className={classes.root}>
         <CssBaseline />
@@ -178,6 +181,8 @@ function App() {
         </Grid>
       </Grid>
     </React.Fragment>
+
+  
   );
 }
 
