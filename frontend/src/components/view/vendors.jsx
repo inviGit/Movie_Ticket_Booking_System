@@ -6,7 +6,7 @@ import Pagination from "../common/pagination";
 import _ from "lodash";
 import AutocompleteInput from "../common/autocompleteInput";
 import { toast } from "react-toastify";
-import { Button } from "@material-ui/core";
+import { Button, Grid, Paper } from "@material-ui/core";
 
 export class Vendor extends Component {
   state = {
@@ -38,8 +38,15 @@ export class Vendor extends Component {
     this.setState({ sortColumn });
   };
 
-  handleTheaterSelect = (event, theater) => {
-    console.log(event);
+  handleVendorSelect = (event, vendor) => {
+    let a = {};
+    if (_.isNull(vendor)) {
+      a = { ...this.state.allVendors };
+      this.setState({ vendors: a });
+    } else {
+      a = [vendor];
+      this.setState({ vendors: a });
+    }
   };
 
   handleSuccess = (message) => {
@@ -65,12 +72,13 @@ export class Vendor extends Component {
     if (role === "ROLE_ADMIN") {
       return (
         <Button
-        variant="contained"
-        color="primary"
-        onClick={() => this.handleVendorForm()}
-      >
-        Add Vendor
-      </Button>
+          variant="contained"
+          color="primary"
+          style={{ marginBottom: "20px" }}
+          onClick={() => this.handleVendorForm()}
+        >
+          Add Vendor
+        </Button>
       );
     }
   };
@@ -100,35 +108,37 @@ export class Vendor extends Component {
 
     const { totalCount, data: filteredVendors } = this.getPagedData();
     return (
-      <div className="container">
-        <div className="row ">
-          <div className="col">
-            {" "}
-            <h3>{pageTitle}</h3>
-            <p>Showing {totalCount} vendors</p>
-            {this.handleRole()}
-          </div>
-        </div>
-        <div className="row mx-lg-n5" style={{ marginTop: "10px" }}>
-          <div className="col py-3 px-lg-5  bg-light">
-            <AutocompleteInput
-              data={allVendors}
-              onItemSelect={this.handleTheaterSelect}
-            />
-            <VendorTable
-              vendors={filteredVendors}
-              sortColumn={sortColumn}
-              onDelete={this.handleDelete}
-              onSort={this.handleSort}
-            />
-            <Pagination
-              itemsCount={totalCount}
-              pageSize={pageSize}
-              currentPage={currentPage}
-              onPageChange={this.handlePageChange}
-            />
-          </div>
-        </div>
+      <div style={{ flexGrow: "1", marginTop: "20px" }}>
+        <Grid container direction="row" justify="center" alignItems="center">
+          <Grid item xs={10}>
+            <Paper>
+              {" "}
+              <AutocompleteInput
+                data={allVendors}
+                label={"name"}
+                onItemSelect={this.handleVendorSelect}
+              />
+            </Paper>
+          </Grid>
+          <Grid item xs={10}>
+            ]
+            <div className="col py-3 px-lg-5  bg-light">
+              {this.handleRole()}
+              <VendorTable
+                vendors={filteredVendors}
+                sortColumn={sortColumn}
+                onDelete={this.handleDelete}
+                onSort={this.handleSort}
+              />
+              <Pagination
+                itemsCount={totalCount}
+                pageSize={pageSize}
+                currentPage={currentPage}
+                onPageChange={this.handlePageChange}
+              />
+            </div>
+          </Grid>
+        </Grid>
       </div>
     );
   }

@@ -21,7 +21,7 @@ export class MovieCard extends Component {
       label: "Name",
       type: "title",
       content: (movie) => (
-        <Link  class="text-dark" to={`/movie/${movie.id}`}>
+        <Link  className="text-dark" to={`/movie/${movie.id}`}>
           {/* <FontAwesomeIcon icon={faFilm} /> */}
           <h5 className="card-title">{movie.movieName}</h5>
         </Link>

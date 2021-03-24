@@ -12,14 +12,6 @@ import TicketPage from "../page/ticketPage";
 import { paginate } from "../../../utils/paginate";
 import Pagination from "../../common/pagination";
 import { Button, Grid } from "@material-ui/core";
-import {
-  FacebookShareButton,
-  FacebookIcon,
-  WhatsappShareButton,
-  WhatsappIcon,
-  EmailShareButton,
-  EmailIcon,
-} from "react-share";
 
 export class CustomerProfile extends Component {
   state = {

@@ -220,6 +220,7 @@ export class Movies extends Component {
               {" "}
               <AutocompleteInput
                 data={allMovies}
+                label={"movieName"}
                 onItemSelect={this.handleMovieSelect}
               />
             </Paper>

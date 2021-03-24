@@ -155,7 +155,8 @@ export class Theaters extends Component {
               {" "}
               <AutocompleteInput
                 data={allTheaters}
-                onCitySelect={this.handleTheaterSelect}
+                label={"theaterName"}
+                onItemSelect={this.handleTheaterSelect}
               />
             </Paper>
           </Grid>

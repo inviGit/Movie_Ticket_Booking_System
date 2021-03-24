@@ -18,7 +18,6 @@ export class NavBar extends Component {
   componentDidMount() {
     cityService.getAllCities().then((res) => {
       this.setState({ cities: res.data });
-      console.log(this.state.cities);
     });
   }
 

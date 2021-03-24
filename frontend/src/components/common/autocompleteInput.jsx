@@ -3,21 +3,14 @@ import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import _ from "lodash";
 
-export default function AutocompleteInput({ data, onItemSelect }) {
-  let optionName = "";
-  if (!_.isUndefined(data) && _.size(data) > 0) {
-    Object.keys(data[0]).map(function (value) {
-      if (_.includes(value, "Name")) {
-        optionName = value;
-      }
-    });
-  }
+export default function AutocompleteInput({ data, label, onItemSelect }) {
+  
   return (
     <Autocomplete
-      id={"city"}
+      id={label}
       options={data}
       fullWidth
-      getOptionLabel={(option) => option[optionName]}
+      getOptionLabel={(option) => option[label]}
       style={{ marginBottom: "10px" }}
       onChange={onItemSelect}
       renderInput={(params) => (

@@ -3,11 +3,8 @@ import cityService from "../../service/cityService";
 import { paginate } from "../../utils/paginate";
 import Pagination from "../common/pagination";
 import CityTable from "../view/tables/cityTable";
-import TextField from "@material-ui/core/TextField";
-import Autocomplete from "@material-ui/lab/Autocomplete";
 import _ from "lodash";
 import { toast } from "react-toastify";
-import { Link, Redirect } from "react-router-dom";
 import AutocompleteInput from "../common/autocompleteInput";
 import { Button, Grid, Paper } from "@material-ui/core";
 
@@ -31,7 +28,6 @@ export class City extends Component {
       });
       this.setState({ cities });
       this.setState({ allCities: cities });
-      console.log(this.state.cities);
     });
   }
 
@@ -66,7 +62,6 @@ export class City extends Component {
   };
 
   handleUpdate = (city) => {
-    console.log(city);
     this.props.history.push({
       pathname: `/city/${city.id}/city-form`,
       state: { city: city },
@@ -129,7 +124,8 @@ export class City extends Component {
               {" "}
               <AutocompleteInput
                 data={allCities}
-                onCitySelect={this.handleCitySelect}
+                label={"cityName"}
+                onItemSelect={this.handleCitySelect}
               />
             </Paper>
           </Grid>
