@@ -1,8 +1,9 @@
-import { Button } from "@material-ui/core";
+import { Button, IconButton } from "@material-ui/core";
 import _ from "lodash";
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import Table from "../../common/table";
+import { InfoTwoTone } from "@material-ui/icons";
 
 export class CityTable extends Component {
   handleRoleForUpdate = () => {
@@ -13,6 +14,7 @@ export class CityTable extends Component {
           <Button
             variant="contained"
             color="primary"
+            size="small"
             onClick={() => this.props.onUpdate(city)}
           >
             Update
@@ -31,7 +33,7 @@ export class CityTable extends Component {
           <Button
             variant="contained"
             color="secondary"
-            style={{ flexGrow: "1" }}
+            size="small"
             onClick={() => this.props.onDelete(city)}
           >
             Delete
@@ -48,14 +50,23 @@ export class CityTable extends Component {
       path: "cityName",
       label: "cityName",
       content: (city) => (
-        <Link
-          to={{
-            pathname: `/city/${city.id}/theaters`,
-            state: { city },
-          }}
-        >
-          {city.cityName}
-        </Link>
+        <div>
+          <Link
+            to={{
+              pathname: `/city/${city.id}/theaters`,
+              state: { city },
+            }}
+          >
+            {city.cityName}
+          </Link>
+          <IconButton
+            color="primary"
+            style={{ float: "right" }}
+            onClick={() => this.props.onCityInfoSelect(city)}
+          >
+            <InfoTwoTone />
+          </IconButton>
+        </div>
       ),
     },
     { path: "pincode", label: "Pincode" },

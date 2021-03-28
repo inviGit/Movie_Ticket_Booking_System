@@ -29,7 +29,6 @@ export class TicketPage extends Component {
   ];
   render() {
     const { ticket } = this.props;
-    console.log(ticket);
     let show = ticket.show;
     let data = { ...ticket, ...show };
 

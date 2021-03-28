@@ -28,6 +28,7 @@ import { Logout } from "./components/pageHandling/logout";
 import NotAuthenticated from "./components/pageHandling/notAuthenticated";
 import { BookingConfirmation } from "./components/view/page/bookingConfirmation";
 import CustomerForm from "./components/view/forms/customerForm";
+import { BookingCancellation } from './components/view/bookingCancellation';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -70,7 +71,12 @@ function App() {
           <NavBar />
 
           <div className="content">
-            <Switch>
+            <Switch
+            ><Route
+                path="/customer/:userId/cancel-booking"
+                component={isAuthenticated ? BookingCancellation : NotAuthenticated}
+              />
+
               <Route
                 path="/vendor/:userId/vendor-form"
                 component={isAuthenticated ? VendorForm : NotAuthenticated}

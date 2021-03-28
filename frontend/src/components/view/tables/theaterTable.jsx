@@ -1,4 +1,5 @@
-import { Button } from "@material-ui/core";
+import { Button, IconButton } from "@material-ui/core";
+import { InfoTwoTone } from "@material-ui/icons";
 import _ from "lodash";
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
@@ -13,6 +14,7 @@ export class TheaterTable extends Component {
           <Button
             variant="contained"
             color="primary"
+            size="small"
             onClick={() => this.props.onUpdate(theater)}
           >
             Update
@@ -31,6 +33,7 @@ export class TheaterTable extends Component {
           <Button
           variant="contained"
           color="secondary"
+          size="small"
           onClick={() => this.props.onDelete(theater)}
         >
           Delete
@@ -46,13 +49,23 @@ export class TheaterTable extends Component {
       path: "theaterName",
       label: "Name",
       content: (theater) => (
-        <Link
-          to={{
-            pathname: `/theater/${theater.id}/movies`,
-          }}
-        >
-          {theater.theaterName}
-        </Link>
+        <div>
+          <Link
+            to={{
+              pathname: `/theater/${theater.id}/movies`,
+            }}
+          >
+            {theater.theaterName}
+          </Link>
+          <IconButton
+            color="primary"
+            style={{float:"right"}}
+            onClick={() => this.props.onTheaterInfoSelect(theater)}
+
+          >
+            <InfoTwoTone/>
+          </IconButton>
+        </div>
       ),
     },
     { path: "theaterAddress", label: "Address" },

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import cityService from "../../../service/cityService";
-import {Form} from "../../common/form";
+import { Form } from "../../common/form";
 import { toast } from "react-toastify";
 import _ from "lodash";
 
@@ -8,7 +8,6 @@ export class CityForm extends Component {
   state = {
     cityId: "",
     city: {
-      pincode: "",
       cityName: "",
       stateName: "",
     },
@@ -16,25 +15,25 @@ export class CityForm extends Component {
   };
 
   componentDidMount() {
+    let city;
     if (localStorage.getItem("role") !== "ROLE_ADMIN") {
       this.props.history.push("/not-authorized");
-    } else if (
-      !_.isUndefined(this.props.match.params.cityId) &&
-      this.props.match.params.cityId !== null
-    ) {
-      let city = this.props.location.state.city;
-      let cityId = this.props.match.params.cityId;
-      this.setState({
-        cityId,
-        title: "Update city",
-      });
-      this.setState(
-        (state) => (
-          (state.city["cityName"] = city.cityName),
-          (state.city["pincode"] = city.pincode),
-          (state.city["stateName"] = city.stateName)
-        )
-      );
+    } else {
+      try {
+        const { id, cityName, stateName } = this.props.location.state.city;
+        city = {
+          cityName: cityName,
+          stateName: stateName,
+        };
+        this.setState({ city, cityId: id });
+      } catch (error) {
+        city = {
+          pincode: "",
+          cityName: "",
+          stateName: "",
+        };
+        this.setState({ city });
+      }
     }
   }
 
@@ -55,8 +54,7 @@ export class CityForm extends Component {
 
   handleSubmit = () => {
     const { cityId, city } = this.state;
-
-    if (cityId !== null && cityId !== "") {
+    if (cityId!=="" && cityId!=="") {
       cityService.updateCity(cityId, city).then((res) => {
         console.log(res.data);
         const { data } = res;

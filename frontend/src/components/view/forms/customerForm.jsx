@@ -57,7 +57,7 @@ export class CustomerForm extends Component {
 
   handleSubmit = () => {
     const { customerId, customer } = this.state;
-    if (!_.isNull(customerId)) {
+    if (!_.isNull(customerId) && !_.isNil(customerId)) {
       customerService.updateCustomer(customerId, customer).then((res) => {
         console.log(res.data);
         const { data } = res;

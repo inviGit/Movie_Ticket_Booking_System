@@ -13,6 +13,7 @@ export class MovieTable extends Component {
           <Button
             variant="contained"
             color="primary"
+            size="small"
             onClick={() => this.props.onUpdate(movie)}
           >
             Update
@@ -31,6 +32,7 @@ export class MovieTable extends Component {
           <Button
           variant="contained"
           color="secondary"
+          size="small"
           onClick={() => this.props.onDelete(movie)}
         >
           Delete

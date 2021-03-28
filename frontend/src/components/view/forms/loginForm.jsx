@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import loginAndRegistrationService from "../../../service/loginAndRegistraionService";
-import {Form }from "../../common/form";
+import { Form } from "../../common/form";
 import { toast } from "react-toastify";
 
 export class Login extends Component {
@@ -13,11 +13,11 @@ export class Login extends Component {
 
   componentDidMount() {
     if (localStorage.getItem("authorization") !== null) {
-      toast("Already Logged In")
+      toast("Already Logged In");
       this.handleRoute(localStorage.getItem("role"));
     }
   }
-  
+
   handleFormValueChange = (event) => {
     const name = event.target.name;
     if (name === "username") {
@@ -31,9 +31,8 @@ export class Login extends Component {
     localStorage.setItem("authorization", data.authorization);
     localStorage.setItem("username", this.state.username);
     localStorage.setItem("role", data.role);
-    this.handleRoute(data.role);
-    window.location.href = "http://localhost:3000/";
     toast("Loged in Successfully");
+    this.handleRoute(data.role);
   };
 
   handleFailure = (message) => {

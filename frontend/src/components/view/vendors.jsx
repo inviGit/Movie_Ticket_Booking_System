@@ -7,15 +7,20 @@ import _ from "lodash";
 import AutocompleteInput from "../common/autocompleteInput";
 import { toast } from "react-toastify";
 import { Button, Grid, Paper } from "@material-ui/core";
+import VendorDialog from "../view/alertDialog/vendorDialog";
+import DeleteDialog from "./alertDialog/deleteDialog";
 
 export class Vendor extends Component {
   state = {
+    pageTitle: "WELCOME",
     allVendors: [],
     vendors: [],
+    selectedVendor: "",
+    openVendorInfoDialog: false,
+    openDeleteDialog: false,
     pageSize: 4,
     currentPage: 1,
     sortColumn: { path: "title", order: "asc" },
-    pageTitle: "WELCOME",
   };
 
   componentDidMount() {
@@ -29,43 +34,6 @@ export class Vendor extends Component {
       });
     }
   }
-
-  handlePageChange = (page) => {
-    this.setState({ currentPage: page });
-  };
-
-  handleSort = (sortColumn) => {
-    this.setState({ sortColumn });
-  };
-
-  handleVendorSelect = (event, vendor) => {
-    let a = {};
-    if (_.isNull(vendor)) {
-      a = { ...this.state.allVendors };
-      this.setState({ vendors: a });
-    } else {
-      a = [vendor];
-      this.setState({ vendors: a });
-    }
-  };
-
-  handleSuccess = (message) => {
-    toast(message);
-    window.location.reload();
-  };
-
-  handleFailure = (message) => {
-    toast(message);
-  };
-
-  handleDelete = (vendor) => {
-    vendorService.removeVendor(vendor.id).then((res) => {
-      const { data } = res;
-      data.status === 1
-        ? this.handleSuccess(data.message)
-        : this.handleFailure(data.message);
-    });
-  };
 
   handleRole = () => {
     const role = localStorage.getItem("role");
@@ -83,6 +51,17 @@ export class Vendor extends Component {
     }
   };
 
+  handleAutoCompleteSelect = (event, vendor) => {
+    let a = {};
+    if (_.isNull(vendor)) {
+      a = { ...this.state.allVendors };
+      this.setState({ vendors: a });
+    } else {
+      a = [vendor];
+      this.setState({ vendors: a });
+    }
+  };
+
   getPagedData = () => {
     const { pageSize, currentPage, sortColumn, vendors } = this.state;
 
@@ -90,16 +69,61 @@ export class Vendor extends Component {
 
     const filteredVendors = paginate(sorted, currentPage, pageSize);
 
-    return { totalCount: vendors.length, data: filteredVendors };
+    return { totalCount: _.size(vendors), data: filteredVendors };
+  };
+
+  handlePageChange = (page) => {
+    this.setState({ currentPage: page });
+  };
+
+  handleSort = (sortColumn) => {
+    this.setState({ sortColumn });
+  };
+
+  handleSuccess = (message) => {
+    window.location.reload();
+    toast(message);
+  };
+
+  handleFailure = (message) => {
+    toast(message);
   };
 
   handleVendorForm = () => {
     this.props.history.push("/vendor-form");
   };
 
+  handleDelete = (vendor) => {
+    this.setState({ selectedVendor: vendor, openDeleteDialog: true });
+  };
+
+  handleDeleteDialogClose = () => {
+    this.setState({ openDeleteDialog: false });
+  };
+
+  handleDeleteDialogConfirm = () => {
+    vendorService.removeVendor(this.state.selectedVendor.id).then((res) => {
+      const { data } = res;
+      data.status === 1
+        ? this.handleSuccess(data.message)
+        : this.handleFailure(data.message);
+    });
+  };
+
+  handleVendorSelect = (vendor) => {
+    this.setState({ selectedVendor: vendor, openVendorInfoDialog: true });
+  };
+
+  handleVendorDialogClose = () => {
+    this.setState({ selectedVendor: "", openVendorInfoDialog: false });
+  };
+
   render() {
     const {
       allVendors,
+      selectedVendor,
+      openVendorInfoDialog,
+      openDeleteDialog,
       pageTitle,
       pageSize,
       currentPage,
@@ -109,6 +133,24 @@ export class Vendor extends Component {
     const { totalCount, data: filteredVendors } = this.getPagedData();
     return (
       <div style={{ flexGrow: "1", marginTop: "20px" }}>
+        {!_.isEmpty(selectedVendor) && !_.isNull(selectedVendor) ? (
+          <VendorDialog
+            open={openVendorInfoDialog}
+            data={selectedVendor}
+            onDialogClose={this.handleVendorDialogClose}
+          />
+        ) : (
+          <h1></h1>
+        )}
+
+        <DeleteDialog
+          open={openDeleteDialog}
+          title={`Delete Vendor?`}
+          content={`This action is irreversible. Vendor will be deleted permanently`}
+          onCancel={this.handleDeleteDialogClose}
+          onConfirm={this.handleDeleteDialogConfirm}
+        />
+
         <Grid container direction="row" justify="center" alignItems="center">
           <Grid item xs={10}>
             <Paper>
@@ -116,17 +158,17 @@ export class Vendor extends Component {
               <AutocompleteInput
                 data={allVendors}
                 label={"name"}
-                onItemSelect={this.handleVendorSelect}
+                onItemSelect={this.handleAutoCompleteSelect}
               />
             </Paper>
           </Grid>
           <Grid item xs={10}>
-            ]
             <div className="col py-3 px-lg-5  bg-light">
               {this.handleRole()}
               <VendorTable
                 vendors={filteredVendors}
                 sortColumn={sortColumn}
+                onVendorSelect={this.handleVendorSelect}
                 onDelete={this.handleDelete}
                 onSort={this.handleSort}
               />

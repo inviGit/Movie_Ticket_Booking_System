@@ -9,6 +9,7 @@ import showService from "../../service/showService";
 import { Button, Grid, Paper } from "@material-ui/core";
 import MoviePage from "./page/moviePage";
 import Page from "../common/page";
+import DeleteDialog from "./alertDialog/deleteDialog";
 
 export class Shows extends Component {
   state = {
@@ -16,6 +17,8 @@ export class Shows extends Component {
     pageTitle: "",
     movie: {},
     shows: [],
+    selectedShow: "",
+    openDeleteDialog: false,
     pageSize: 4,
     currentPage: 1,
     sortColumn: { path: "title", order: "asc" },
@@ -74,8 +77,8 @@ export class Shows extends Component {
   };
 
   handleSuccess = (message) => {
-    toast(message);
     window.location.reload();
+    toast(message);
   };
 
   handleFailure = (message) => {
@@ -83,29 +86,45 @@ export class Shows extends Component {
   };
 
   handleDelete = (show) => {
-    console.log(show);
+    this.setState({ selectedShow: show, openDeleteDialog: true });
+  };
 
-    showService.removeShowFromTheater(show.id).then((res) => {
-      const { data } = res;
-      data.status === 1
-        ? this.handleSuccess(data.message)
-        : this.handleFailure(data.message);
-    });
+  handleDeleteDialogClose = () => {
+    this.setState({ openDeleteDialog: false });
+  };
+
+  handleDeleteDialogConfirm = () => {
+    showService
+      .removeShowFromTheater(this.state.selectedShow.id)
+      .then((res) => {
+        const { data } = res;
+        data.status === 1
+          ? this.handleSuccess(data.message)
+          : this.handleFailure(data.message);
+      });
   };
 
   render() {
     const {
       pageTitle,
+      movie,
+      movieId,
+      openDeleteDialog,
       pageSize,
       currentPage,
       sortColumn,
-      movie,
-      movieId,
     } = this.state;
     const { totalCount, data: shows } = this.getPagedData();
 
     return (
       <div style={{ flexGrow: "1", marginTop: "20px" }}>
+        <DeleteDialog
+          open={openDeleteDialog}
+          title={`Delete Show?`}
+          content={`This action is irreversible. Show will be deleted permanently`}
+          onCancel={this.handleDeleteDialogClose}
+          onConfirm={this.handleDeleteDialogConfirm}
+        />
         <Grid container direction="row" justify="center" alignItems="center">
           <Grid item xs={3}>
             {!_.isEmpty(movie) ? <MoviePage movie={movie} /> : <h1>hi</h1>}

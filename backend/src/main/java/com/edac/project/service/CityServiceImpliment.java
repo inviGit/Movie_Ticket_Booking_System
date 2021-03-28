@@ -1,6 +1,7 @@
 package com.edac.project.service;
 
 import com.edac.project.dao.*;
+import com.edac.project.exception.ResourceNotFoundException;
 import com.edac.project.models.*;
 import com.edac.project.models.common.ResponseResult;
 import com.edac.project.models.common.SeatMapping;
@@ -65,6 +66,7 @@ public class CityServiceImpliment implements CityService{
         try {
             vendor = vendorDao.findById(vendorId).get();
         } catch (Exception e) {
+            System.out.println(e.getClass().getName());
             return null;
         }
         return vendor;

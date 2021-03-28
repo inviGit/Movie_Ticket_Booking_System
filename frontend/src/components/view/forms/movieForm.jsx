@@ -109,7 +109,7 @@ export class MovieForm extends Component {
     movieToUpdate.genre = genre;
     movieToUpdate.activeStatus = activeStatus;
 
-    if (movieId !== null && movieId !== "") {
+    if (movieId!=="" && movieId!==null) {
       movieService.updateMovie(movieId, movieToUpdate).then((res) => {
         console.log(res.data);
         const { data } = res;

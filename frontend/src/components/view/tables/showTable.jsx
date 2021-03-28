@@ -13,6 +13,7 @@ export class ShowTable extends Component {
           <Button
             variant="contained"
             color="secondary"
+            size="small"
             onClick={() => this.props.onDelete(show)}
           >
             Delete

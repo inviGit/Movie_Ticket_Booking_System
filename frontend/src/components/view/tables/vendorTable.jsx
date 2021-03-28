@@ -1,4 +1,5 @@
-import { Button } from "@material-ui/core";
+import { Button, IconButton } from "@material-ui/core";
+import { InfoTwoTone } from "@material-ui/icons";
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import Table from "../../common/table";
@@ -8,14 +9,18 @@ export class VendorTable extends Component {
     {
       path: "name",
       label: "Name",
-      content: (Vendor) => (
-        <Link
-          to={{
-            pathname: `/vendor/:vendorId`,
-          }}
+      content: (vendor) => (
+        <div>
+        <h6>{vendor.name}<IconButton
+          color="primary"
+          className="badge"
+          style={{ float: "right" }}
+          onClick={() => this.props.onVendorSelect(vendor)}
         >
-          {Vendor.name}
-        </Link>
+          <InfoTwoTone />
+        </IconButton></h6>
+        
+        </div>
       ),
     },
     { path: "vendorEmail", label: "Email" },

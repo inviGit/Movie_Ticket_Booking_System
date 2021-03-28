@@ -13,6 +13,7 @@ import TheaterPage from "./page/theaterPage";
 import { genre } from "./../../constants/genre";
 import { language } from "../../constants/language";
 import _ from "lodash";
+import DeleteDialog from "./alertDialog/deleteDialog";
 
 export class Movies extends Component {
   state = {
@@ -24,6 +25,8 @@ export class Movies extends Component {
     language: language,
     selectedGenre: "",
     selectedLanguage: "",
+    openDeleteDialog: false,
+    selectedMovie: "",
     pageSize: 5,
     currentPage: 1,
     sortColumn: { path: "title", order: "asc" },
@@ -49,7 +52,9 @@ export class Movies extends Component {
             movies: res.data.movies,
             allMovies: res.data.movies,
           });
-          this.setState({ pageTitle: "Movies is theater" });
+          this.setState({
+            pageTitle: `Movies is theater: ${res.data.theaterName}`,
+          });
         });
       }
     } catch (error) {
@@ -70,67 +75,6 @@ export class Movies extends Component {
         });
     }
   }
-
-  handleGenreSelect = (genre) => {
-    this.setState({ selectedGenre: genre, currentPage: 1 });
-  };
-
-  handleLanguageSelect = (language) => {
-    this.setState({ selectedLanguage: language, currentPage: 1 });
-  };
-  handlePageChange = (page) => {
-    this.setState({ currentPage: page });
-  };
-
-  handleSort = (sortColumn) => {
-    this.setState({ sortColumn });
-  };
-
-  handleMovieForm = () => {
-    this.props.history.push({
-      pathname: `/theater/${this.state.theaterId}/movie-form`,
-    });
-  };
-
-  handleShowClick = (movie) => {
-    this.props.history.push(`/movie/${movie.id}/shows`);
-  };
-
-  handleSuccess = (message) => {
-    toast(message);
-    window.location.reload();
-  };
-
-  handleFailure = (message) => {
-    toast(message);
-  };
-
-  handleDelete = (movie) => {
-    movieService.removeMovieFromTheater(movie.id).then((res) => {
-      const { data } = res;
-      data.status === 1
-        ? this.handleSuccess(data.message)
-        : this.handleFailure(data.message);
-    });
-  };
-
-  handleUpdate = (movie) => {
-    this.props.history.push({
-      pathname: `/movie/${movie.id}/movie-form`,
-      state: { movie: movie, theaterId: this.state.theaterId },
-    });
-  };
-
-  handleMovieSelect = (event, movie) => {
-    let a = {};
-    if (_.isNull(movie)) {
-      a = { ...this.state.allMovies };
-      this.setState({ movies: a });
-    } else {
-      a = [movie];
-      this.setState({ movies: a });
-    }
-  };
 
   handleView = (movies, sortColumn) => {
     const role = localStorage.getItem("role");
@@ -200,10 +144,82 @@ export class Movies extends Component {
     return { totalCount: filtered.length, data: filteredMovies };
   };
 
+  handleGenreSelect = (genre) => {
+    this.setState({ selectedGenre: genre, currentPage: 1 });
+  };
+
+  handleLanguageSelect = (language) => {
+    this.setState({ selectedLanguage: language, currentPage: 1 });
+  };
+  handlePageChange = (page) => {
+    this.setState({ currentPage: page });
+  };
+
+  handleSort = (sortColumn) => {
+    this.setState({ sortColumn });
+  };
+
+  handleMovieForm = () => {
+    this.props.history.push({
+      pathname: `/theater/${this.state.theaterId}/movie-form`,
+    });
+  };
+
+  handleShowClick = (movie) => {
+    this.props.history.push(`/movie/${movie.id}/shows`);
+  };
+
+  handleSuccess = (message) => {
+    window.location.reload();
+    toast(message);
+  };
+
+  handleFailure = (message) => {
+    toast(message);
+  };
+
+  handleUpdate = (movie) => {
+    this.props.history.push({
+      pathname: `/movie/${movie.id}/movie-form`,
+      state: { movie: movie, theaterId: this.state.theaterId },
+    });
+  };
+
+  handleMovieSelect = (event, movie) => {
+    let a = {};
+    if (_.isNull(movie)) {
+      a = { ...this.state.allMovies };
+      this.setState({ movies: a });
+    } else {
+      a = [movie];
+      this.setState({ movies: a });
+    }
+  };
+
+  handleDelete = (movie) => {
+    this.setState({ selectedMovie: movie, openDeleteDialog: true });
+  };
+
+  handleDeleteDialogClose = () => {
+    this.setState({ openDeleteDialog: false });
+  };
+
+  handleDeleteDialogConfirm = () => {
+    movieService
+      .removeMovieFromTheater(this.state.selectedMovie.id)
+      .then((res) => {
+        const { data } = res;
+        data.status === 1
+          ? this.handleSuccess(data.message)
+          : this.handleFailure(data.message);
+      });
+  };
+
   render() {
     const {
       allMovies,
       theater,
+      openDeleteDialog,
       pageTitle,
       pageSize,
       currentPage,
@@ -214,6 +230,14 @@ export class Movies extends Component {
 
     return (
       <div style={{ flexGrow: "1", marginTop: "20px" }}>
+        <DeleteDialog
+          open={openDeleteDialog}
+          title={`Delete Movie?`}
+          content={`This action is irreversible. Movie will be deleted permanently`}
+          onCancel={this.handleDeleteDialogClose}
+          onConfirm={this.handleDeleteDialogConfirm}
+        />
+
         <Grid container direction="row" justify="center" alignItems="center">
           <Grid item xs={10}>
             <Paper>
@@ -227,8 +251,9 @@ export class Movies extends Component {
           </Grid>
           <Grid item xs={12}></Grid>
           <Grid item xs={"auto"}>
-            <span className="badge badge-dark">Filter:</span>
-            <Grid></Grid>
+            <span className="badge badge-dark" style={{ fontSize: "20px" }}>
+              Filter:
+            </span>
           </Grid>
           <Grid item xs={"auto"}>
             <Paper>
@@ -249,7 +274,12 @@ export class Movies extends Component {
             </Paper>
           </Grid>
           <Grid item xs={4}></Grid>
-          <Grid item xs={3}>
+          <Grid item xs={"auto"}>
+            <span className="badge badge-dark" style={{ fontSize: "20px" }}>
+              Theater Details:
+            </span>
+          </Grid>
+          <Grid item xs={"auto"}>
             {!_.isEmpty(this.state.theater) ? (
               <div style={{ marginTop: "10px" }}>
                 <TheaterPage theater={theater} />
@@ -264,6 +294,7 @@ export class Movies extends Component {
                 className="col py-3 px-lg-5  bg-light"
                 style={{ marginTop: "10px" }}
               >
+                <p>{pageTitle}</p>
                 {this.handleRole()}
                 {this.handleView(filteredMovies, sortColumn)}
                 <Pagination

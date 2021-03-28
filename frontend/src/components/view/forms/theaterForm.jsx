@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import theaterService from "../../../service/theaterService";
-import {Form} from "../../common/form";
+import { Form } from "../../common/form";
 import { toast } from "react-toastify";
 import vendorService from "../../../service/vendorService";
 import _ from "lodash";
@@ -17,31 +17,32 @@ export class TheaterForm extends Component {
     let theater;
     if (localStorage.getItem("role") !== "ROLE_VENDOR") {
       this.props.history.replace("/not-authorized");
-    } else if (
-      !_.isUndefined(this.props.match.params.theaterId) &&
-      this.props.match.params.theaterId !== null
-    ) {
-      theater = this.props.location.state.theater;
-      this.setState(
-        (state) => (
-          (state.theater["theaterName"] = theater.theaterName),
-          (state.theater["theaterAddress"] = theater.theaterAddress)
-        )
-      );
-      this.setState({ title: "Update Theater", theaterId: theater.id });
     } else {
-      vendorService
-        .getVendorByUserName(localStorage.getItem("username"))
-        .then((res) => {
-          this.setState({ vendorId: res.data.id });
-          this.setState(
-            (state) => (
-              (state.theater["city"] = ""),
-              (state.theater["theaterName"] = ""),
-              (state.theater["theaterAddress"] = "")
-            )
-          );
-        });
+      try {
+        const {
+          id,
+          theaterName,
+          theaterAddress,
+        } = this.props.location.state.theater;
+
+        theater = {
+          theaterName: theaterName,
+          theaterAddress: theaterAddress,
+        };
+        console.log("theater", theater);
+        this.setState({ title: "Update Theater", theater, theaterId: id });
+      } catch (error) {
+        vendorService
+          .getVendorByUserName(localStorage.getItem("username"))
+          .then((res) => {
+            theater = {
+              city: "",
+              theaterName: "",
+              theaterAddress: "",
+            };
+            this.setState({ theater, vendorId: res.data.id });
+          });
+      }
     }
   }
 
@@ -61,8 +62,8 @@ export class TheaterForm extends Component {
 
   handleSubmit = () => {
     const { vendorId, theaterId, theater: theaterInfo } = this.state;
-
-    if (theaterId !== null && theaterId !== "") {
+    if (theaterId !== "" && theaterId != null) {
+      console.log("p");
       theaterService.updateTheater(theaterId, theaterInfo).then((res) => {
         console.log(res.data);
         const { data } = res;
@@ -93,6 +94,7 @@ export class TheaterForm extends Component {
 
   render() {
     const { title, theater } = this.state;
+
     return (
       <div>
         <Form

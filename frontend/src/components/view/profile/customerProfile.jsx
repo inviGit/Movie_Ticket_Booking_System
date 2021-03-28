@@ -12,6 +12,8 @@ import TicketPage from "../page/ticketPage";
 import { paginate } from "../../../utils/paginate";
 import Pagination from "../../common/pagination";
 import { Button, Grid } from "@material-ui/core";
+import DeleteDialog from "../alertDialog/deleteDialog";
+
 
 export class CustomerProfile extends Component {
   state = {
@@ -19,6 +21,7 @@ export class CustomerProfile extends Component {
     userName: "",
     user: {},
     tickets: {},
+    openCancelBookingDialog: false,
     isExpanded: "",
     pageSize: 4,
     currentPage: 1,
@@ -45,9 +48,7 @@ export class CustomerProfile extends Component {
     }
   }
 
-  handleChange = (panel) => {
-    console.log(this.state.tickets);
-
+  handlePanel1 = (panel) => {
     this.state.isExpanded === panel
       ? this.setState({ isExpanded: false })
       : this.setState({ isExpanded: panel });
@@ -70,18 +71,47 @@ export class CustomerProfile extends Component {
   };
 
   handleEdit = (user) => {
-    console.log(user);
     this.props.history.push({
       pathname: `/customer/${user.id}/customer-form`,
       state: { user: user },
     });
   };
+
+  handleCancelBooking = () => {
+    this.setState({ openCancelBookingDialog: true });
+  };
+
+  handleCancellingDialogClose = () => {
+    this.setState({ openCancelBookingDialog: false });
+  };
+
+  handleCancellingDialogClose = () => {
+    const { tickets, userId } = this.state;
+    this.props.history.push({
+      pathname: `/customer/${userId}/cancel-booking`,
+      state: { tickets: tickets },
+    });
+    this.setState({ openCancelBookingDialog: false });
+  };
+
   render() {
-    const { user, pageSize, currentPage } = this.state;
+    const {
+      user,
+      openCancelBookingDialog,
+      tickets,
+      pageSize,
+      currentPage,
+    } = this.state;
     const { totalCount, data: filteredTickets } = this.getPagedData();
-    console.log(pageSize, currentPage, totalCount);
     return (
       <div style={{ flexGrow: "1", marginTop: "20px" }}>
+        <DeleteDialog
+          open={openCancelBookingDialog}
+          title={`Proceed to booking cancellation?`}
+          content={`Individual ticket cancellation is not allowed. All tickets related to particular show will get cancelled`}
+          onCancel={this.handleCancellingDialogClose}
+          onConfirm={this.handleCancellingDialogClose}
+        />
         <Grid container direction="row" justify="center" alignItems="center">
           <Grid item xs={12}></Grid>
           <Grid item xs={3} style={{ textAlign: "center" }}>
@@ -91,12 +121,13 @@ export class CustomerProfile extends Component {
               <h1></h1>
             )}
           </Grid>
+
           <Grid item xs={12}></Grid>
           <Grid item xs={8}>
             <Accordion
               style={{ marginTop: "20px" }}
               expanded={this.state.isExpanded === "panel1"}
-              onChange={() => this.handleChange("panel1")}
+              onChange={() => this.handlePanel1("panel1")}
             >
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
@@ -137,12 +168,22 @@ export class CustomerProfile extends Component {
                 </div>
               </AccordionDetails>
               <AccordionDetails>
-                <Pagination
-                  itemsCount={totalCount}
-                  pageSize={pageSize}
-                  currentPage={currentPage}
-                  onPageChange={this.handlePageChange}
-                />
+                <div>
+                  <Pagination
+                    itemsCount={totalCount}
+                    pageSize={pageSize}
+                    currentPage={currentPage}
+                    onPageChange={this.handlePageChange}
+                  />
+                  <Button
+                    variant="contained"
+                    size="small"
+                    color="secondary"
+                    onClick={this.handleCancelBooking}
+                  >
+                    Cancel Booking
+                  </Button>
+                </div>
               </AccordionDetails>
             </Accordion>
           </Grid>

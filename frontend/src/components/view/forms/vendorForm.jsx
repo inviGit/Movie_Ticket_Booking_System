@@ -69,7 +69,7 @@ export class VendorForm extends Component {
   handleSubmit = () => {
     const { vendorId, vendor } = this.state;
 
-    if (!_.isNull(vendorId)) {
+    if (vendorId!=="" && vendorId!==null) {
       vendorService.updateVendor(vendorId, vendor).then((res) => {
         console.log(res.data);
         const { data } = res;

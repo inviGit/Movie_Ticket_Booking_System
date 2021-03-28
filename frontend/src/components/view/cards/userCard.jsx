@@ -9,6 +9,7 @@ export class UserCard extends Component {
       label: "Name",
       type: "title",
     },
+    { path: "id", label: "Id", type: "subTitle" },
     { path: "userName", label: "Username", type: "subTitle" },
     { path: "email", label: "Email", type: "subTitle" },
     { path: "phoneNo", label: "Phone Number", type: "subTitle" },
