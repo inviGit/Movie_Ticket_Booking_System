@@ -113,7 +113,7 @@ export class BookingCancellation extends Component {
                   style={{ margin: "10px" }}
                   onClick={() => this.handleShowSelect(show)}
                 >
-                  <ShowPage data={show} onItemSelect={this.handleShowSelect} />;
+                  <ShowPage data={show} onItemSelect={this.handleShowSelect} />
                 </Grid>
               </div>
             );

@@ -13,14 +13,31 @@ import { paginate } from "../../../utils/paginate";
 import Pagination from "../../common/pagination";
 import { Button, Grid } from "@material-ui/core";
 import DeleteDialog from "../alertDialog/deleteDialog";
-
+import {
+  FacebookMessengerShareButton,
+  WhatsappShareButton,
+  EmailShareButton,
+  TelegramShareButton,
+} from "react-share";
+import Paper from "@material-ui/core/Paper";
+import {
+  FacebookMessengerIcon,
+  WhatsappIcon,
+  EmailIcon,
+  TelegramIcon,
+} from "react-share";
 
 export class CustomerProfile extends Component {
+  constructor(props) {
+    super(props);
+    this.ref = React.createRef();
+  }
   state = {
     userId: "",
     userName: "",
-    user: {},
-    tickets: {},
+    user: [],
+    tickets: [],
+    sharedTickets: [],
     openCancelBookingDialog: false,
     isExpanded: "",
     pageSize: 4,
@@ -34,13 +51,22 @@ export class CustomerProfile extends Component {
       }
       const userName = localStorage.getItem("username");
       let user = {};
+      let sharedTickets = [];
       customerService.getCustomerByUserName(userName).then((res) => {
         user = { userName: userName, ...res.data };
+        res.data.tickets.map((ticket) => {
+          sharedTickets.push({
+            "Seat Number: ": ticket.seatNo,
+            "Show Time: ": ticket.show.showTime,
+            "Show Date: ": ticket.show.showDate,
+          });
+        });
         this.setState({
           userId: res.data.id,
           userName,
           user,
           tickets: res.data.tickets,
+          sharedTickets,
         });
       });
     } else {
@@ -64,10 +90,6 @@ export class CustomerProfile extends Component {
 
   handlePageChange = (page) => {
     this.setState({ currentPage: page });
-  };
-
-  handleTicketSelect = (ticket) => {
-    console.log(ticket);
   };
 
   handleEdit = (user) => {
@@ -99,6 +121,7 @@ export class CustomerProfile extends Component {
       user,
       openCancelBookingDialog,
       tickets,
+      sharedTickets,
       pageSize,
       currentPage,
     } = this.state;
@@ -113,16 +136,67 @@ export class CustomerProfile extends Component {
           onConfirm={this.handleCancellingDialogClose}
         />
         <Grid container direction="row" justify="center" alignItems="center">
-          <Grid item xs={12}></Grid>
-          <Grid item xs={3} style={{ textAlign: "center" }}>
+          <Grid item xs={4}></Grid>
+          <Grid item xs={4} style={{ textAlign: "center" }}>
             {!_.isEmpty(user) ? (
               <UserCard user={user} onEdit={this.handleEdit} />
             ) : (
               <h1></h1>
             )}
           </Grid>
+          <Grid item xs={4}></Grid>
 
-          <Grid item xs={12}></Grid>
+          <Grid item xs={2}></Grid>
+
+          <Grid item xs={6}>
+            {_.size(tickets) > 0 ? (
+              <div style={{ float: "right" }}>
+                <span
+                  className="nav-item badge badge-dark"
+                  style={{
+                    marginRight: "10px",
+                    marginLeft: "30px",
+                    fontSize: "16px",
+                  }}
+                >
+                  Share Tickets:
+                </span>
+                <FacebookMessengerShareButton
+                  title="Movie Tickets"
+                  url={JSON.stringify(sharedTickets)}
+                >
+                  <FacebookMessengerIcon
+                    size={46}
+                    round={true}
+                  ></FacebookMessengerIcon>
+                </FacebookMessengerShareButton>
+                <WhatsappShareButton
+                  title="Movie Tickets"
+                  url={JSON.stringify(sharedTickets)}
+                >
+                  <WhatsappIcon size={46} round={true}></WhatsappIcon>
+                </WhatsappShareButton>
+                <EmailShareButton
+                  subject="Movie Tickets"
+                  body={JSON.stringify(sharedTickets)}
+                  url={" "}
+                >
+                  <EmailIcon size={46} round={true}></EmailIcon>
+                </EmailShareButton>
+                <TelegramShareButton
+                  title="Movie Tickets"
+                  url={JSON.stringify(sharedTickets, undefined, 4)}
+                >
+                  <TelegramIcon size={46} round={true}></TelegramIcon>
+                </TelegramShareButton>
+              </div>
+            ) : (
+              <h1></h1>
+            )}
+          </Grid>
+
+          <Grid item xs={2}></Grid>
+
           <Grid item xs={8}>
             <Accordion
               style={{ marginTop: "20px" }}
@@ -135,28 +209,14 @@ export class CustomerProfile extends Component {
                 id="panel1bh-header"
               >
                 <Typography>Booked Tickets</Typography>
-
-                {/* <Button
-                  variant="contained"
-                  size="small"
-                  color="secondary"
-                  style={{ marginLeft: "20px" }}
-                >
-                  see all
-                </Button> */}
               </AccordionSummary>
               <AccordionDetails>
                 <div style={{ flexGrow: "1", marginTop: "20px" }}>
                   <Grid container>
-                    {!_.isEmpty(this.state.user) ? (
+                    {!_.isEmpty(user) ? (
                       filteredTickets.map((ticket) => {
                         return (
-                          <Grid
-                            key={ticket.id}
-                            item
-                            xs={3}
-                            onClick={() => this.handleTicketSelect(ticket)}
-                          >
+                          <Grid key={ticket.id} item xs={3}>
                             <TicketPage ticket={ticket} />
                           </Grid>
                         );

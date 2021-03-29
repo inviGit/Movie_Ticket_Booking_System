@@ -9,10 +9,11 @@ export class MovieCard extends Component {
       key: "image",
       content: () => (
         <img
-        src="https://picsum.photos/200/200/"
-        className="card-img-top"
-        alt="..."
-      />
+          src="https://images.unsplash.com/photo-1594827768989-e6acf749aa1c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+          className="card-img-top"
+          style={{ height: "200px", width: "200px" }}
+          alt="..."
+        />
       ),
       type: "image",
     },
@@ -21,7 +22,7 @@ export class MovieCard extends Component {
       label: "Name",
       type: "title",
       content: (movie) => (
-        <Link  className="text-dark" to={`/movie/${movie.id}`}>
+        <Link className="text-dark" to={`/movie/${movie.id}`}>
           {/* <FontAwesomeIcon icon={faFilm} /> */}
           <h5 className="card-title">{movie.movieName}</h5>
         </Link>
@@ -34,17 +35,15 @@ export class MovieCard extends Component {
       key: "update",
       content: (movie) => (
         <Button
-        
-        variant="contained"
-        color="primary"
-        onClick={() => this.props.onShowClick(movie)}
-      >
-        View Show's
-      </Button>
+          variant="contained"
+          color="primary"
+          onClick={() => this.props.onShowClick(movie)}
+        >
+          View Show's
+        </Button>
       ),
       type: "button",
     },
-    
   ];
   render() {
     const { movies } = this.props;

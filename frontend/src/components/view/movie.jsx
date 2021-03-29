@@ -46,7 +46,6 @@ export class Movies extends Component {
         });
       } else {
         theaterService.getTheater(theaterId).then((res) => {
-          console.log(res);
           this.setState({ theaterId: res.data.id, theater: res.data });
           this.setState({
             movies: res.data.movies,

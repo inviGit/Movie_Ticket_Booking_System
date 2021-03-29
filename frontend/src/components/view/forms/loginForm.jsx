@@ -48,11 +48,9 @@ export class Login extends Component {
     loginAndRegistrationService
       .login(user)
       .then((res) => {
-        console.log(res);
         this.handleSuccess(res.headers);
       })
       .catch((error) => {
-        console.log(error.response);
         this.handleFailure("Wrong Credentials");
       });
   };

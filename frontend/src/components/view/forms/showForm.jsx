@@ -21,7 +21,6 @@ export class ShowForm extends Component {
         const movieId = this.props.match.params.movieId;
         this.setState({ movieId });
       } catch (error) {
-        console.log(error);
       }
     }
   }
@@ -30,7 +29,6 @@ export class ShowForm extends Component {
     const {target} = event
     const id = target.id;
     this.setState((state) => (state.show[id] = target.value));
-    console.log(this.state.show);
   };
 
   handleSuccess = (message) => {

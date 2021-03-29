@@ -11,15 +11,18 @@ export class VendorTable extends Component {
       label: "Name",
       content: (vendor) => (
         <div>
-        <h6>{vendor.name}<IconButton
-          color="primary"
-          className="badge"
-          style={{ float: "right" }}
-          onClick={() => this.props.onVendorSelect(vendor)}
-        >
-          <InfoTwoTone />
-        </IconButton></h6>
-        
+          <h6>
+            {vendor.name}
+            <IconButton
+              color="primary"
+              className="badge"
+              style={{ float: "right" }}
+              size="small"
+              onClick={() => this.props.onVendorSelect(vendor)}
+            >
+              <InfoTwoTone />
+            </IconButton>
+          </h6>
         </div>
       ),
     },
@@ -31,6 +34,7 @@ export class VendorTable extends Component {
         <Button
           variant="contained"
           color="secondary"
+          size="small"
           onClick={() => this.props.onDelete(vendor)}
         >
           Delete

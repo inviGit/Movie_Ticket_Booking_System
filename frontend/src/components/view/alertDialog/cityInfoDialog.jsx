@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import AlertDialog from "../../common/alertDialog";
 import { Button } from "@material-ui/core";
+import _ from "lodash";
 
 export class CityInfoDialog extends Component {
   data = [
@@ -21,6 +22,12 @@ export class CityInfoDialog extends Component {
       content: `State Name: ${this.props.data.stateName}`,
     },
     {
+      key: "content4",
+      content: `Number of theaters in city: ${_.size(
+        this.props.data.theaters
+      )}`,
+    },
+    {
       key: "action",
       action: (
         <div>
@@ -34,7 +41,7 @@ export class CityInfoDialog extends Component {
 
   render() {
     const { open, data } = this.props;
-  console.log(data)
+    console.log(data);
     return (
       <div>
         <AlertDialog open={open} data={this.data} />

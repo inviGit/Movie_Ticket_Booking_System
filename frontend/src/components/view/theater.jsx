@@ -53,7 +53,6 @@ export class Theaters extends Component {
       });
     } else {
       theaterService.getAllTheaters().then((res) => {
-        console.log(res);
         this.setState({
           theaters: res.data,
           allTheaters: res.data,
@@ -141,7 +140,6 @@ export class Theaters extends Component {
   };
 
   handleUpdate = (theater) => {
-    console.log(theater);
     this.props.history.push({
       pathname: `/theater/${theater.id}/theater-form`,
       state: { theater: theater },
@@ -149,7 +147,6 @@ export class Theaters extends Component {
   };
 
   handleTheaterInfoSelect = (theater) => {
-    console.log(theater)
     this.setState({ selectedTheater: theater, openTheaterInfoDialog: true });
   };
 

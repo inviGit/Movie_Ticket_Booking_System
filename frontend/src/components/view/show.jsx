@@ -26,12 +26,10 @@ export class Shows extends Component {
 
   componentDidMount() {
     movieService.getMovie(this.props.match.params.movieId).then((res) => {
-      console.log(res);
       this.setState({ movieId: res.data.id });
       this.setState({ movie: res.data });
       this.setState({ shows: res.data.shows });
       this.setState({ pageTitle: "Movie Shows" });
-      console.log(this.state.movie);
     });
   }
 
@@ -127,7 +125,7 @@ export class Shows extends Component {
         />
         <Grid container direction="row" justify="center" alignItems="center">
           <Grid item xs={3}>
-            {!_.isEmpty(movie) ? <MoviePage movie={movie} /> : <h1>hi</h1>}
+            {!_.isEmpty(movie) ? <MoviePage movie={movie} /> : <h1></h1>}
           </Grid>
 
           <Grid item xs={10}>

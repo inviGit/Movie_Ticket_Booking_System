@@ -12,7 +12,7 @@ const ListGroup = (props) => {
         aria-haspopup="true"
         aria-expanded="false"
       >
-       {selectedItem? selectedItem: items[0]} 
+        {selectedItem ? selectedItem : items[0]}
       </Button>
       <div className="dropdown-menu">
         {items.map((item) => (

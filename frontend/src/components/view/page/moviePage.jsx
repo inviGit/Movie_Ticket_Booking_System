@@ -17,7 +17,6 @@ export class MoviePage extends Component {
   ];
   render() {
     const { movie } = this.props;
-    console.log(movie);
     return (
       <div style={{ marginTop: "10px" }}>
         <Page columns={this.columns} data={movie} />
