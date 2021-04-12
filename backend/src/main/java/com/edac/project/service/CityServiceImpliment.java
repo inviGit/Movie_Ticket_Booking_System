@@ -79,13 +79,10 @@ public class CityServiceImpliment implements CityService{
         try {
             applicationUser = applicationUserDao.findById(username).get();
         } catch (Exception e) {
-            applicationUser=null;
+            throw new ApiRequestException("invalid username");
         }
-        if(applicationUser!=null){
-            return vendorDao.findVendorByApplicationUser(applicationUser);
-        }else{
-            return null;
-        }
+        return vendorDao.findVendorByApplicationUser(applicationUser);
+
     }
 
     @Override
@@ -102,8 +99,7 @@ public class CityServiceImpliment implements CityService{
             responseResult.setMessage("Vendor Added Successfully");
             responseResult.setObject(vendor);
         } catch (Exception e) {
-            responseResult.setMessage("Duplicate entry "+ vendor.getVendorEmail() +" for vendor");
-            e.printStackTrace();
+            throw new ApiRequestException("Duplicate entry \"+ vendor.getVendorEmail() +\" for vendor");
         }
         return responseResult;
     }
@@ -112,26 +108,24 @@ public class CityServiceImpliment implements CityService{
     public ResponseResult registerVendor(Integer vendorId, ApplicationUser applicationUser) {
         responseResult = new ResponseResult(0, "User Error", null);
         Vendor vendor = getVendorById(vendorId);
-        Optional<ApplicationUser> byId = applicationUserDao.findById(applicationUser.getUsername());
-        if(byId.isPresent()){
-            responseResult.setMessage("Already registered");
-        }else if(vendor == null ){
-            responseResult.setMessage("Vendor doesn't exist");
-        }else{
-            applicationUser.setRole(ApplicationUserRole.VENDOR);
-            PasswordConfig passwordConfig = new PasswordConfig();
-            applicationUser.setPassword(passwordConfig.passwordEncoder().encode(applicationUser.getPassword()));
-            try {
-                applicationUserDao.save(applicationUser);
-                vendor.setApplicationUser(applicationUser);
-                vendorDao.save(vendor);
-                responseResult.setStatus(1);
-                responseResult.setMessage("Vendor Registered Successfully");
-                responseResult.setObject("username: "+ applicationUser.getUsername());
-            } catch (Exception e) {
-                responseResult.setMessage("Duplicate entry " + applicationUser.getUsername() + " for user");
-                e.printStackTrace();
-            }
+        Optional<ApplicationUser> byId;
+        try {
+            byId = applicationUserDao.findById(applicationUser.getUsername());
+        } catch (Exception e) {
+            throw new ApiRequestException("invalid username");
+        }
+        applicationUser.setRole(ApplicationUserRole.VENDOR);
+        PasswordConfig passwordConfig = new PasswordConfig();
+        applicationUser.setPassword(passwordConfig.passwordEncoder().encode(applicationUser.getPassword()));
+        try {
+            applicationUserDao.save(applicationUser);
+            vendor.setApplicationUser(applicationUser);
+            vendorDao.save(vendor);
+            responseResult.setStatus(1);
+            responseResult.setMessage("Vendor Registered Successfully");
+            responseResult.setObject("username: "+ applicationUser.getUsername());
+        } catch (Exception e) {
+            throw new ApiRequestException("Duplicate entry \" + applicationUser.getUsername() + \" for user");
         }
         return responseResult;
     }
@@ -140,20 +134,15 @@ public class CityServiceImpliment implements CityService{
     public ResponseResult updateVendor(Integer vendorId, Vendor vendorToUpdate) {
         responseResult = new ResponseResult(0, "User Error", null);
         Vendor vendor = getVendorById(vendorId);
-        if(vendor==null){
-            responseResult.setMessage("vendor doesn't exist");
-        }else{
-            try {
-                vendorToUpdate.setId(vendor.getId());
-                vendorToUpdate.setTheaters(vendor.getTheaters());
-                vendorToUpdate.setApplicationUser(vendor.getApplicationUser());
-                vendorDao.save(vendorToUpdate);
-                responseResult.setStatus(1);
-                responseResult.setMessage("Vendor updated successfully");
-            } catch (Exception e) {
-                responseResult.setMessage("Duplicate entry "+ vendor.getVendorEmail() +" for vendor");
-                e.printStackTrace();
-            }
+        try {
+            vendorToUpdate.setId(vendor.getId());
+            vendorToUpdate.setTheaters(vendor.getTheaters());
+            vendorToUpdate.setApplicationUser(vendor.getApplicationUser());
+            vendorDao.save(vendorToUpdate);
+            responseResult.setStatus(1);
+            responseResult.setMessage("Vendor updated successfully");
+        } catch (Exception e) {
+            throw new ApiRequestException("Duplicate entry \"+ vendor.getVendorEmail() +\" for vendor");
         }
         responseResult.setObject(vendorToUpdate);
         return responseResult;
@@ -167,8 +156,7 @@ public class CityServiceImpliment implements CityService{
             responseResult.setStatus(1);
             responseResult.setMessage("Vendor removed successfully");
         } catch (Exception e) {
-            responseResult.setMessage("Vendor doesn't exist");
-            e.printStackTrace();
+            throw new ApiRequestException("Vendor doesn't exist");
         }
         return responseResult;
     }
@@ -182,7 +170,7 @@ public class CityServiceImpliment implements CityService{
         try {
             customer = customerDao.findById(customerId).get();
         } catch (Exception e) {
-            return null;
+            throw new ApiRequestException("Customer Not Found");
         }
         return customer;
     }
@@ -193,14 +181,10 @@ public class CityServiceImpliment implements CityService{
         try {
             applicationUser = applicationUserDao.findById(username).get();
         } catch (Exception e) {
-            applicationUser=null;
+            throw new ApiRequestException("Invalid Username");
         }
-        if(applicationUser!=null){
-            Customer customer = customerDao.findCustomerByApplicationUser(applicationUser);
-            return customer;
-        }else{
-            return null;
-        }
+        Customer customer = customerDao.findCustomerByApplicationUser(applicationUser);
+        return customer;
     }
 
     @Override
@@ -225,8 +209,7 @@ public class CityServiceImpliment implements CityService{
                 responseResult.setMessage("Customer Registered Successfully");
                 responseResult.setObject(applicationUser.getUsername());
             } catch (Exception e) {
-                e.printStackTrace();
-                responseResult.setMessage("ERROR: "+e.getMessage());
+                throw new ApiRequestException("ERROR: "+e.getMessage());
             }
         }else{
             responseResult.setMessage("Duplicate UserName");
@@ -238,20 +221,15 @@ public class CityServiceImpliment implements CityService{
     public ResponseResult updateCustomer(Integer customerId, Customer customerToUpdate) {
         responseResult = new ResponseResult(0, "User Error", null);
         Customer customer = getCustomerById(customerId);
-        if(customer==null){
-            responseResult.setMessage("Customer Not Registered");
-        }else{
-            try {
-                customerToUpdate.setId(customer.getId());
-                customerToUpdate.setApplicationUser(customer.getApplicationUser());
-                customerToUpdate.setTickets(customer.getTickets());
-                customerDao.save(customerToUpdate);
-                responseResult.setStatus(1);
-                responseResult.setMessage("Customer details updated successfully");
-            } catch (Exception e) {
-                responseResult.setMessage("Duplicate entry "+ customer.getEmail() +" for customer");
-                e.printStackTrace();
-            }
+        try {
+            customerToUpdate.setId(customer.getId());
+            customerToUpdate.setApplicationUser(customer.getApplicationUser());
+            customerToUpdate.setTickets(customer.getTickets());
+            customerDao.save(customerToUpdate);
+            responseResult.setStatus(1);
+            responseResult.setMessage("Customer details updated successfully");
+        } catch (Exception e) {
+            throw new ApiRequestException("Duplicate entry "+ customer.getEmail() +" for customer");
         }
         responseResult.setObject(customerToUpdate);
         return responseResult;
@@ -260,17 +238,14 @@ public class CityServiceImpliment implements CityService{
     @Override
     public ResponseResult removeCustomerById(Integer customerId) {
         responseResult = new ResponseResult(0, "User Error", null);
-        if(customerDao.existsById(customerId)){
+
             try {
                 customerDao.deleteById(customerId);
                 responseResult.setStatus(1);
                 responseResult.setMessage("Removed Customer "+customerId+" Successfully");
             } catch (Exception e) {
-                e.printStackTrace();
+                throw new ApiRequestException("Customer doesn't exist");
             }
-        }else{
-            responseResult.setMessage("Customer doesn't exist");
-        }
         return responseResult;
     }
     //Customer --End
@@ -283,7 +258,7 @@ public class CityServiceImpliment implements CityService{
         try {
             city = cityDao.findById(cityId).get();
         } catch (Exception e) {
-            return null;
+            throw new ApiRequestException("City Not Found");
         }
         return city;
     }
@@ -301,8 +276,7 @@ public class CityServiceImpliment implements CityService{
             responseResult.setStatus(1);
             responseResult.setMessage("City added Successfully");
         } catch (Exception e) {
-            responseResult.setMessage("Duplicate pincode entry "+ city.getPincode() +" for city");
-            e.printStackTrace();
+            throw new ApiRequestException("Duplicate pincode entry "+ city.getPincode() +" for city");
         }
         responseResult.setObject(city);
         return responseResult;
@@ -312,19 +286,14 @@ public class CityServiceImpliment implements CityService{
     public ResponseResult updateCity(Integer cityId, City cityToUpdate) {
         responseResult = new ResponseResult(0, "User Error", null);
         City city = getCityById(cityId);
-        if(city==null){
-            responseResult.setMessage("City doesn't exist");
-        }else{
-            try {
-                cityToUpdate.setPincode(city.getPincode());
-                cityToUpdate.setTheaters(city.getTheaters());
-                cityDao.save(cityToUpdate);
-                responseResult.setStatus(1);
-                responseResult.setMessage("Updated City Successfully");
-            } catch (Exception e) {
-                responseResult.setMessage("Duplicate pincode entry "+ city.getPincode() +" for city");
-                e.printStackTrace();
-            }
+        try {
+            cityToUpdate.setPincode(city.getPincode());
+            cityToUpdate.setTheaters(city.getTheaters());
+            cityDao.save(cityToUpdate);
+            responseResult.setStatus(1);
+            responseResult.setMessage("Updated City Successfully");
+        } catch (Exception e) {
+            throw new ApiRequestException("Duplicate pincode entry "+ city.getPincode() +" for city");
         }
         responseResult.setObject(cityToUpdate);
         return responseResult;
@@ -333,16 +302,12 @@ public class CityServiceImpliment implements CityService{
     @Override
     public ResponseResult removeCityById(Integer cityId) {
         responseResult = new ResponseResult(0, "User Error", null);
-        if(cityDao.existsById(cityId)){
-            try {
-                cityDao.deleteById(cityId);
-                responseResult.setStatus(1);
-                responseResult.setMessage("Removed City "+cityId+" Successfully");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }else{
-            responseResult.setMessage("City doesn't exist");
+        try {
+            cityDao.deleteById(cityId);
+            responseResult.setStatus(1);
+            responseResult.setMessage("Removed City "+cityId+" Successfully");
+        } catch (Exception e) {
+            throw new ApiRequestException("City Doesn't Found");
         }
         return responseResult;
     }
@@ -357,7 +322,7 @@ public class CityServiceImpliment implements CityService{
             theater = theaterDao.findById(theaterId).get();
             return theater;
         } catch (Exception e) {
-            return null;
+            throw new ApiRequestException("Theater Not Found");
         }
     }
 
@@ -371,11 +336,7 @@ public class CityServiceImpliment implements CityService{
         responseResult = new ResponseResult(0, "User Error", null);
         City city = getCityById(cityId);
         Vendor vendor = getVendorById(vendorId);
-        if(city==null){
-            responseResult.setMessage("City Doesn't exist");
-        }else if(vendor==null){
-            responseResult.setMessage("Vendor Doesn't exist");
-        }else if(city.getTheaters().stream().filter(t -> t.getTheaterName().equals(theater.getTheaterName())&&
+        if(city.getTheaters().stream().filter(t -> t.getTheaterName().equals(theater.getTheaterName())&&
                 t.getTheaterAddress().equals(theater.getTheaterAddress())).count()>0){
             responseResult.setMessage("Duplicate entry "+theater.getTheaterName()+" for theater");
         }else {
@@ -387,7 +348,7 @@ public class CityServiceImpliment implements CityService{
                 responseResult.setMessage("Theater added successfully");
                 responseResult.setObject(theater);
             } catch (Exception e) {
-                e.printStackTrace();
+                throw new ApiRequestException("Error While Booking Ticket");
             }
         }
         return responseResult;
@@ -397,21 +358,16 @@ public class CityServiceImpliment implements CityService{
     public ResponseResult updateTheater(Integer theaterId, Theater theaterToUpdate) {
         responseResult = new ResponseResult(0, "User Error", null);
         Theater theater = getTheaterById(theaterId);
-        if(theater==null){
-            responseResult.setMessage("Theater doesn't exist");
-        }else{
-            theaterToUpdate.setId(theater.getId());
-            theaterToUpdate.setCity(theater.getCity());
-            theaterToUpdate.setMovies(theater.getMovies());
-            theaterToUpdate.setVendor(theater.getVendor());
-            try {
-                theaterDao.save(theaterToUpdate);
-                responseResult.setStatus(1);
-                responseResult.setMessage("Theater updated successfully");
-            } catch (Exception e) {
-                responseResult.setMessage("Duplicate entry "+theaterToUpdate.getTheaterAddress()+" for theater");
-                e.printStackTrace();
-            }
+        theaterToUpdate.setId(theater.getId());
+        theaterToUpdate.setCity(theater.getCity());
+        theaterToUpdate.setMovies(theater.getMovies());
+        theaterToUpdate.setVendor(theater.getVendor());
+        try {
+            theaterDao.save(theaterToUpdate);
+            responseResult.setStatus(1);
+            responseResult.setMessage("Theater updated successfully");
+        } catch (Exception e) {
+            throw new ApiRequestException("Duplicate entry "+theaterToUpdate.getTheaterAddress()+" for theater");
         }
         responseResult.setObject(theaterToUpdate);
         return responseResult;
@@ -425,8 +381,7 @@ public class CityServiceImpliment implements CityService{
             responseResult.setStatus(1);
             responseResult.setMessage("Removed theater successfully");
         } catch (Exception e) {
-            responseResult.setMessage("Theater Doesn't exist");
-            e.printStackTrace();
+            throw new ApiRequestException("Theater Doesn't exist");
         }
         return responseResult;
     }
@@ -440,7 +395,7 @@ public class CityServiceImpliment implements CityService{
         try {
             movie = movieDao.findById(movieId).get();
         } catch (Exception e) {
-            return null;
+            throw new ApiRequestException("Movie Not Found");
         }
         return movie;
     }
@@ -454,26 +409,22 @@ public class CityServiceImpliment implements CityService{
     public ResponseResult addMovieToTheater(Integer theaterId, Movie movie) {
         responseResult = new ResponseResult(0, "User Error", null);
         Theater theater = getTheaterById(theaterId);
-        if(theater==null){
-            responseResult.setMessage("theater Doesn't exist");
+        if(theater.getMovies().stream().filter(t->
+                t.getMovieName().equals(movie.getMovieName()) &&
+                        t.getLanguage().equals(movie.getLanguage())).count()>0){
+            responseResult.setMessage("Duplicate Movie entry for theater");
         }else{
-            if(theater.getMovies().stream().filter(t->
-                    t.getMovieName().equals(movie.getMovieName()) &&
-                            t.getLanguage().equals(movie.getLanguage())).count()>0){
-                responseResult.setMessage("Duplicate Movie entry for theater");
-            }else{
-                try {
-                    movieDao.save(movie);
-                    theater.addMovie(movie);
-                    theaterDao.save(theater);
-                    responseResult.setStatus(1);
-                    responseResult.setMessage("Added movie to theater successfully");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            try {
+                movieDao.save(movie);
+                theater.addMovie(movie);
+                theaterDao.save(theater);
+                responseResult.setStatus(1);
+                responseResult.setMessage("Added movie to theater successfully");
+            } catch (Exception e) {
+                throw new ApiRequestException("Duplicate movie entry");
             }
-            responseResult.setObject(movie);
         }
+        responseResult.setObject(movie);
         return responseResult;
     }
 
@@ -481,19 +432,15 @@ public class CityServiceImpliment implements CityService{
     public ResponseResult updateMovie(Integer movieId, Movie movieToUpdate) {
         responseResult = new ResponseResult(0, "User Error", null);
         Movie movie = getMovieById(movieId);
-        if(movie == null){
-            responseResult.setMessage("Movie doesn't exist");
-        }else{
-            movieToUpdate.setId(movie.getId());
-            movieToUpdate.setTheater(movie.getTheater());
-            movieToUpdate.setShows(movie.getShows());
-            try {
-                movieDao.save(movieToUpdate);
-                responseResult.setStatus(1);
-                responseResult.setMessage("Movie updated successfully");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        movieToUpdate.setId(movie.getId());
+        movieToUpdate.setTheater(movie.getTheater());
+        movieToUpdate.setShows(movie.getShows());
+        try {
+            movieDao.save(movieToUpdate);
+            responseResult.setStatus(1);
+            responseResult.setMessage("Movie updated successfully");
+        } catch (Exception e) {
+            throw new ApiRequestException("Duplicate movie entry");
         }
         responseResult.setObject(movieToUpdate);
         return responseResult;
@@ -508,8 +455,7 @@ public class CityServiceImpliment implements CityService{
             responseResult.setStatus(1);
 
         } catch (Exception e) {
-            responseResult.setMessage("Movie Doesn't exist");
-            e.printStackTrace();
+            throw new ApiRequestException("Movie Doesn't exist");
         }
         return responseResult;
     }
@@ -523,7 +469,7 @@ public class CityServiceImpliment implements CityService{
         try {
             show = showDao.findById(showId).get();
         } catch (Exception e) {
-            return null;
+            throw new ApiRequestException("Show not found");
         }
         return show;
     }
@@ -532,9 +478,7 @@ public class CityServiceImpliment implements CityService{
     public ResponseResult addShowToTheater(Integer movieId, Show show) {
         responseResult = new ResponseResult(0, "User Error", null);
         Movie movie = getMovieById(movieId);
-        if(movie==null){
-            responseResult.setMessage("movie Doesn't exist");
-        }else if(movie.getShows().stream().filter(s -> s.getShowTime().equals(show.getShowTime())).count()>0) {
+        if(movie.getShows().stream().filter(s -> s.getShowTime().equals(show.getShowTime())).count()>0) {
             responseResult.setMessage("Duplicate show entry for movie");
         }else {
             try {
@@ -549,7 +493,7 @@ public class CityServiceImpliment implements CityService{
                 responseResult.setStatus(1);
                 responseResult.setObject(show);
             } catch (Exception e) {
-                e.printStackTrace();
+                throw new ApiRequestException("Duplicate show entry");
             }
         }
         return responseResult;
@@ -559,9 +503,7 @@ public class CityServiceImpliment implements CityService{
     public ResponseResult updateShowToTheater(Integer showId, Show showToUpdate) {
         responseResult = new ResponseResult(0, "User Error", null);
         Show show = getShowById(showId);
-        if(show == null){
-            responseResult.setMessage("Show doesn't exist");
-        }else{
+
             showToUpdate.setId(show.getId());
             showToUpdate.setMovie(show.getMovie());
             try {
@@ -569,9 +511,9 @@ public class CityServiceImpliment implements CityService{
                 responseResult.setStatus(1);
                 responseResult.setMessage("Updated Show Successfully");
             } catch (Exception e) {
-                e.printStackTrace();
+                throw new ApiRequestException("Duplicate show entry");
             }
-        }
+
         responseResult.setObject(showToUpdate);
         return responseResult;
     }
@@ -584,7 +526,7 @@ public class CityServiceImpliment implements CityService{
             responseResult.setMessage("Removed Show Successfully");
             responseResult.setStatus(1);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new ApiRequestException("Show does not exist");
         }
         return responseResult;
     }
@@ -599,8 +541,7 @@ public class CityServiceImpliment implements CityService{
             seating = seatingDao.findById(seatingId).get();
             return seating;
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            throw new ApiRequestException("Seating not found");
         }
     }
 
@@ -610,39 +551,33 @@ public class CityServiceImpliment implements CityService{
         Show show = getShowById(showId);
         Customer customer = getCustomerById(customerId);
         Seating seating = show.getSeating();
-        if (seating == null) {
-            responseResult.setMessage("Show is not available");
-        }else if(customer == null){
-            responseResult.setMessage("Invalid Customer: "+customerId);
-        }else{
-            List<Ticket> tickets = new ArrayList<>();
-            Ticket ticket;
-            Map<Character,Integer> seatMap = new SeatMapping().getSeatMap();
-            short[][] seatsToUpdate = seating.getSeats();
-            for(String seat: seats){
-                Character a = seat.charAt(0);
-                int rowIndex = seatMap.get(seat.charAt(0));
-                int columnIndex = Integer.parseInt(String.valueOf(seat.charAt(1)));
-                if(seatsToUpdate[rowIndex][columnIndex-1]==1){
-                    responseResult.setMessage("Seat: " + seat + " is already booked");
-                    return responseResult;
-                }else{
-                    seatsToUpdate[rowIndex][columnIndex-1]=1;
-                    ticket = new Ticket();
-                    ticket.setSeatNo(seat);
-                    show.addTicket(ticket);
-                    customer.addTicket(ticket);
-                    tickets.add(ticket);
-                }
+        List<Ticket> tickets = new ArrayList<>();
+        Ticket ticket;
+        Map<Character,Integer> seatMap = new SeatMapping().getSeatMap();
+        short[][] seatsToUpdate = seating.getSeats();
+        for(String seat: seats){
+            Character a = seat.charAt(0);
+            int rowIndex = seatMap.get(seat.charAt(0));
+            int columnIndex = Integer.parseInt(String.valueOf(seat.charAt(1)));
+            if(seatsToUpdate[rowIndex][columnIndex-1]==1){
+                responseResult.setMessage("Seat: " + seat + " is already booked");
+                return responseResult;
+            }else{
+                seatsToUpdate[rowIndex][columnIndex-1]=1;
+                ticket = new Ticket();
+                ticket.setSeatNo(seat);
+                show.addTicket(ticket);
+                customer.addTicket(ticket);
+                tickets.add(ticket);
             }
-            try {
-                List<Ticket> savedTickets = ticketDao.saveAll(tickets);
-                responseResult.setStatus(1);
-                responseResult.setMessage("Booked show successfully");
-                responseResult.setObject(savedTickets);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        }
+        try {
+            List<Ticket> savedTickets = ticketDao.saveAll(tickets);
+            responseResult.setStatus(1);
+            responseResult.setMessage("Booked show successfully");
+            responseResult.setObject(savedTickets);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return responseResult;
     }
@@ -652,29 +587,23 @@ public class CityServiceImpliment implements CityService{
         responseResult = new ResponseResult(0, "User Error", null);
         Show show = getShowById(showId);
         Customer customer = getCustomerById(customerId);
-        if(show==null){
-            responseResult.setMessage("Invalid ShowId: " + showId);
-        }else if(customer==null){
-            responseResult.setMessage("Invalid customerId: " + customerId);
-        }else{
-            List<Ticket> tickets = ticketDao.findTicketByCustomerIdAndShowId(show, customer);
-            Map<Character,Integer> seatMap = new SeatMapping().getSeatMap();
-            Seating seating = show.getSeating();
-            short[][] seatsToUpdate = seating.getSeats();
-            for(Ticket ticket: tickets){
-                String seat = ticket.getSeatNo();
-                Character a = seat.charAt(0);
-                int rowIndex = seatMap.get(seat.charAt(0));
-                int columnIndex = Integer.parseInt(String.valueOf(seat.charAt(1)));
-                seatsToUpdate[rowIndex][columnIndex-1]=0;
-            }
-            try {
-                ticketDao.deleteAll(tickets);
-                responseResult.setStatus(1);
-                responseResult.setMessage("Cancelled booking successfully");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        List<Ticket> tickets = ticketDao.findTicketByCustomerIdAndShowId(show, customer);
+        Map<Character,Integer> seatMap = new SeatMapping().getSeatMap();
+        Seating seating = show.getSeating();
+        short[][] seatsToUpdate = seating.getSeats();
+        for(Ticket ticket: tickets){
+            String seat = ticket.getSeatNo();
+            Character a = seat.charAt(0);
+            int rowIndex = seatMap.get(seat.charAt(0));
+            int columnIndex = Integer.parseInt(String.valueOf(seat.charAt(1)));
+            seatsToUpdate[rowIndex][columnIndex-1]=0;
+        }
+        try {
+            ticketDao.deleteAll(tickets);
+            responseResult.setStatus(1);
+            responseResult.setMessage("Cancelled booking successfully");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return responseResult;
     }
@@ -687,8 +616,7 @@ public class CityServiceImpliment implements CityService{
             ticket = ticketDao.findById(ticketId).get();
             return ticket;
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            throw new ApiRequestException("Ticket not found");
         }
     }
 }
