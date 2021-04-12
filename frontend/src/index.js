@@ -6,7 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
 import { BrowserRouter } from 'react-router-dom';
-import { Temp } from './components/temp/temp';
+
 
 ReactDOM.render(
   <BrowserRouter>

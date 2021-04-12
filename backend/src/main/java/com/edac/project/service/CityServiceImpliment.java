@@ -1,6 +1,8 @@
 package com.edac.project.service;
 
 import com.edac.project.dao.*;
+import com.edac.project.exception.ApiException;
+import com.edac.project.exception.ApiRequestException;
 import com.edac.project.exception.ResourceNotFoundException;
 import com.edac.project.models.*;
 import com.edac.project.models.common.ResponseResult;
@@ -66,8 +68,7 @@ public class CityServiceImpliment implements CityService{
         try {
             vendor = vendorDao.findById(vendorId).get();
         } catch (Exception e) {
-            System.out.println(e.getClass().getName());
-            return null;
+            throw new ApiRequestException("vendor not found");
         }
         return vendor;
     }
